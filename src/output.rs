@@ -26,7 +26,15 @@ impl BgMap {
         }
     }
 
-    pub fn draw(&self, ) {
+    pub fn draw(&self, layers: &mut Vec<Vec<Vec<[i32; 2]>>>) {
+        for layer in layers {
+            for row in layer {
+                for element in row{
+                    println!("element: {}", element[0]);
+                }
+            }
+        }
+
         draw_texture_ex(
             &self.background_sprite_sheet,
             0.0,
