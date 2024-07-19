@@ -2,7 +2,12 @@ mod input;
 mod process;
 mod output;
 
+use core::time;
+use std::{thread::sleep, time::{Duration, SystemTime}};
+
 use macroquad::prelude::*;
+
+const FPS: f32 = 60.0;
 
 fn conf() -> Conf {
     Conf{
@@ -27,7 +32,7 @@ async fn main() {
         info!("couldnt load background");
         return;
     }
-    let bg_map = bg_map.unwrap();
+    let mut bg_map = bg_map.unwrap();
 
     //player
     // let player = output::Player::initialize("").await;
@@ -38,16 +43,37 @@ async fn main() {
     let mut mov = input::Movement::initialize(10.0);
 
     loop {
+
+        let now = SystemTime::now();
+
         clear_background(BLACK);
 
         //input
-        input::Movement::read_and_set_vel(&mut mov);
-
+        let vel = input::Movement::read_and_set_vel(&mut mov);
 
         //draw
-        bg_map.draw(0, 0);
+        bg_map.draw(vel);
         output::Player::draw_temp();
 
+        match now.elapsed() {
+            Ok(elapsed) => {
+                fps_control(elapsed);
+            }
+            Err(e) => {
+                error!("Error: {e:?}");
+            }
+        }
+
         next_frame().await
+    }
+}
+
+fn fps_control(elapsed: Duration) {
+    let fps_duration = time::Duration::from_secs_f32(1.0/FPS);
+    if elapsed < fps_duration {
+        let sleep_duration = fps_duration - elapsed;
+        if sleep_duration > time::Duration::from_micros(0) {
+            sleep(fps_duration - elapsed);
+        }
     }
 }

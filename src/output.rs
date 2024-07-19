@@ -1,9 +1,11 @@
 use macroquad::{prelude::*, texture};
 
-use crate::input;
+use crate::input::{self, Velocity};
 
 pub struct BgMap {
-    background_img: Texture2D
+    background_img: Texture2D,
+    origin_x: f32,
+    origin_y: f32,
 }
 
 pub struct Player {
@@ -58,17 +60,24 @@ impl BgMap {
             None
         } else {
             info!("map loaded!");
-            Option::from(BgMap {background_img: texture.unwrap()})
+            let img = texture.unwrap();
+            let w = img.width();
+            let h = img.height();
+            Option::from(BgMap {
+                background_img: img,
+                origin_x: screen_width()/2.0 - w/2.0, 
+                origin_y: screen_height()/2.0 - h/2.0
+                })
         }
     }
 
-    pub fn draw(&self, mov: input::Movement ) {
-        let origin_x = screen_width()/2.0 - self.background_img.width()/2.0;
-        let origin_y = screen_height()/2.0 - self.background_img.height()/2.0;
+    pub fn draw(&mut self, vel : Velocity) {
+        self.origin_x = self.origin_x + vel.x;
+        self.origin_y = self.origin_y + vel.y;
         draw_texture_ex(
             &self.background_img,
-            origin_x + x as f32,
-            origin_y + y as f32,
+            self.origin_x,
+            self.origin_y,
             WHITE,
             DrawTextureParams{
                 dest_size: Some(
