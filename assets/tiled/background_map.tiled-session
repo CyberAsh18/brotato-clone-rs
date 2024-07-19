@@ -1,0 +1,23 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "background_map.tsx": {
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/AshfaaqRiphque/Downloads",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+    ],
+    "project": "background_map.tiled-project",
+    "recentFiles": [
+        "background_map.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}
