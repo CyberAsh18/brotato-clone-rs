@@ -1,9 +1,10 @@
 use macroquad::logging::info;
-use macroquad::input::{is_key_down, is_key_pressed, KeyCode};
+use macroquad::input::{is_key_down, KeyCode};
+
+use crate::custom::Point;
 
 struct Direction {
-    horizontal: f32,
-    vertical : f32
+    point: Point
 }
 
 pub struct Movement{
@@ -12,57 +13,59 @@ pub struct Movement{
 }
 
 pub struct Velocity{
-    pub x: f32,
-    pub y: f32,
+    pub point: Point
 }
 
 
 impl Movement {
+
+    ///speed here is the pixel per frame
     pub fn initialize(speed: f32) -> Movement {
         info!("initialized movement!");
-        return Movement { speed, dir: Direction { horizontal: 0.0, vertical: 0.0} }
+        return Movement { speed, dir: Direction { 
+            point: Point {
+                x: 0.0,
+                y: 0.0
+            }
+        } }
     }
     
+    // 1 frame => 1 pixel * speed constant
+    // (pixel * speed) per frame
     pub fn read_and_set_vel(&mut self) -> Velocity {
 
-        let mut horizontal_pressed = false;
-        let mut vertical_pressed = false;
-
         //left
-        if is_key_down(macroquad::input::KeyCode::D) && self.dir.horizontal != -1.0 {
-            self.dir.horizontal = -1.0 + self.dir.horizontal;
-            horizontal_pressed = true;
+        if is_key_down(KeyCode::A) {
+            self.dir.point.x += -1.0;
         }
 
         //right
-        if is_key_down(macroquad::input::KeyCode::A) && self.dir.horizontal != 1.0{
-            self.dir.horizontal = 1.0 + self.dir.horizontal;
-            horizontal_pressed = true;
-        }
-
-        if !horizontal_pressed {
-            self.dir.horizontal = 0.0;
+        if is_key_down(KeyCode::D) {
+            self.dir.point.x += 1.0;
         }
 
         //up
-        if is_key_down(macroquad::input::KeyCode::S) && self.dir.vertical != -1.0 {
-            self.dir.vertical = -1.0 + self.dir.vertical;
-            vertical_pressed = true;
+        if is_key_down(KeyCode::W) {
+            self.dir.point.y += -1.0;
         } 
 
         //down
-        if is_key_down(macroquad::input::KeyCode::W) && self.dir.vertical != 1.0 {
-            self.dir.vertical = 1.0 + self.dir.vertical;
-            vertical_pressed = true;
+        if is_key_down(KeyCode::S) {
+            self.dir.point.y += 1.0;
         }
 
-        if !vertical_pressed {
-            self.dir.vertical = 0.0;
-        }
-        
         return Velocity{
-            x: self.speed * self.dir.horizontal,
-            y: self.speed * self.dir.vertical
+            point: Point {
+                x: self.speed * self.dir.point.x,
+                y: self.speed * self.dir.point.y,
+            }
         }
     }   
+}
+
+
+impl Velocity {
+    pub fn destroy_boxed(boxed_vel: Box<Velocity>) {
+        
+    }
 }
