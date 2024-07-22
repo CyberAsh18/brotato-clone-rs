@@ -3,11 +3,11 @@ use macroquad::prelude::*;
 use crate::input::Velocity;
 use crate::custom::{self, BoundaryHit, Point};
 
-const WIDTH: f32 = 16.0;
-const HEIGHT: f32 = 64.0;
+const WIDTH: f32 = 64.0;
+const HEIGHT: f32 = 128.0;
 
 pub struct BgMap {
-    background_img: Texture2D,
+    pub background_img: Texture2D,
     origin: custom::Point
 }
 
@@ -40,7 +40,7 @@ impl Player {
         }
     }
 
-    pub fn camera(&mut self, map_boundary_hit: BoundaryHit, vel : &Velocity) -> (BoundaryHit, Velocity) {
+    pub fn camera(&mut self, map_boundary_hit: BoundaryHit, vel : &Velocity, bg_map_size: &Point) -> (BoundaryHit, Velocity) {
         let mut mut_vel = Velocity {
             point: self.origin.clone(),
         };
@@ -56,7 +56,7 @@ impl Player {
         } 
 
         if map_boundary_hit.right {
-            mut_vel.point.x += vel.point.x - self.origin.x - WIDTH/2.0
+            mut_vel.point.x += vel.point.x - (bg_map_size.x - screen_width());
         }
 
         if map_boundary_hit.top {
@@ -64,16 +64,13 @@ impl Player {
         } 
 
         if map_boundary_hit.bottom {
-            mut_vel.point.y += vel.point.y - self.origin.y + HEIGHT/2.0;
-            info!("mut_vel y: {}", mut_vel.point.y);
-        } 
-
+            mut_vel.point.y += vel.point.y - (bg_map_size.y - screen_height());
+        }
 
         return (boundary_hit, mut_vel);
     }
 
     pub fn draw_temp(vel : Velocity) {
-        info!("draw_temp y: {}", vel.point.y);
         draw_rectangle(vel.point.x, vel.point.y, WIDTH, HEIGHT, ORANGE);
     }
 

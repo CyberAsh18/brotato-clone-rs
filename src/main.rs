@@ -6,6 +6,7 @@ mod custom;
 use core::time;
 use std::{thread::sleep, time::SystemTime};
 
+use custom::Point;
 use macroquad::prelude::*;
 
 const FPS: f32 = 60.0;
@@ -34,11 +35,14 @@ async fn main() {
         return;
     }
     let mut bg_map = bg_map.unwrap();
-
+    let bg_map_size = Point {
+        x: bg_map.background_img.width(),
+        y: bg_map.background_img.height(),
+    };
     // player
     let mut player = output::Player::initialize();
 
-    let mut mov = input::Movement::initialize(1.0);
+    let mut mov = input::Movement::initialize(5.0);
 
     loop {
         let now = SystemTime::now();
@@ -51,13 +55,16 @@ async fn main() {
         //process
         //camera
         let bg_cam = bg_map.camera(&input_vel);
-        let player_cam = output::Player::camera(&mut player, bg_cam.0, &input_vel);
+        let player_cam = output::Player::camera(
+            &mut player, 
+            bg_cam.0, 
+            &input_vel,
+            &bg_map_size
+        );
 
         //draw
         bg_map.draw(bg_cam.1);
-
         output::Player::draw_temp(player_cam.1);
-
 
         fps_control(now);
         next_frame().await
