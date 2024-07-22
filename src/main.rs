@@ -22,8 +22,6 @@ fn conf() -> Conf {
     }
 }
 
-
-
 #[macroquad::main(conf)]
 async fn main() {
     info!("Initializing modules");
@@ -48,9 +46,8 @@ async fn main() {
         let now = SystemTime::now();
         clear_background(BLACK);
 
-        
         //input
-        let input_vel = Box::new(input::Movement::read_and_set_vel(&mut mov));
+        let input_vel = input::Movement::read_and_set_vel(&mut mov);
 
         //process
         //camera
