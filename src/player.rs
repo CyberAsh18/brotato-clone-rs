@@ -66,11 +66,27 @@ impl Player {
     pub fn draw_temp(vel : Velocity) {
         draw_rectangle(vel.point.x, vel.point.y, WIDTH, HEIGHT, ORANGE);
         
-        let gun_width = WIDTH * 1.50;
+        let gun_width = WIDTH * 1.2;
         let gun_height = HEIGHT / 4.0;
-        draw_rectangle(vel.point.x + (WIDTH / 2.0) - gun_width / 2.0, 
-        vel.point.y + (HEIGHT/2.0) - gun_height/2.0, 
-        gun_width, gun_height, BLUE);
+        let x = vel.point.x + (WIDTH / 2.0);
+        let y = vel.point.y + (HEIGHT/2.0) - gun_height/2.0;
+        let rot_angle = 120.0_f32;
+
+        let params = DrawRectangleParams {
+            offset: Vec2 {
+                x: 0.0,
+                y: 0.0
+            },
+            rotation: rot_angle.to_radians(),
+            color: PURPLE
+        };
+
+        draw_rectangle_ex(
+            x, 
+            y, 
+            gun_width, 
+            gun_height,
+            params);
     }
 
     pub fn draw(&self, x: i32, y: i32) {
