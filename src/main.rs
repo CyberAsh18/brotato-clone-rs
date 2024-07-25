@@ -3,6 +3,12 @@ mod process;
 mod output;
 mod custom;
 
+mod background_map;
+use background_map::BackgroundMap;
+
+mod player;
+use player::Player;
+
 use core::time;
 use std::{thread::sleep, time::SystemTime};
 
@@ -27,7 +33,7 @@ async fn main() {
     info!("Initializing modules");
 
     //map
-    let bg_map = output::BgMap::initialize("assets/background_map.png").await;
+    let bg_map = BackgroundMap::initialize("assets/background_map.png").await;
     if bg_map.is_none() {
         info!("couldnt load background");
         return;
@@ -38,7 +44,7 @@ async fn main() {
         y: bg_map.background_img.height(),
     };
     // player
-    let mut player = output::Player::initialize();
+    let mut player = Player::initialize();
 
     let mut mov = input::Movement::initialize(5.0);
 
@@ -52,7 +58,7 @@ async fn main() {
         //process
         //camera
         let bg_cam = bg_map.camera(&input_vel);
-        let player_cam = output::Player::camera(
+        let player_cam = Player::camera(
             &mut player, 
             bg_cam.0, 
             &input_vel,
@@ -61,13 +67,12 @@ async fn main() {
 
         //draw
         bg_map.draw(bg_cam.1);
-        output::Player::draw_temp(player_cam.1);
+        Player::draw_temp(player_cam.1);
 
         fps_control(now);
         next_frame().await
     }
 }
-
 
 fn fps_control(now: SystemTime) {
     match now.elapsed() {

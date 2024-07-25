@@ -1,24 +1,13 @@
 use macroquad::logging::info;
 use macroquad::input::{is_key_down, KeyCode};
-
-use crate::custom::Point;
-
-struct Direction {
-    point: Point
-}
+use crate::custom::{Direction, Point, Velocity};
 
 pub struct Movement{
-    speed: f32,
-    dir: Direction
+    pub speed: f32,
+    pub dir: Direction
 }
-
-pub struct Velocity{
-    pub point: Point
-}
-
 
 impl Movement {
-
     ///speed here is the pixel per frame
     pub fn initialize(speed: f32) -> Movement {
         info!("initialized movement!");
@@ -61,11 +50,4 @@ impl Movement {
             }
         }
     }   
-}
-
-
-impl Velocity {
-    pub fn destroy_boxed(boxed_vel: Box<Velocity>) {
-        
-    }
 }
