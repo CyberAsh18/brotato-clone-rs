@@ -1,6 +1,6 @@
 use macroquad::logging::info;
-use macroquad::input::{is_key_down, mouse_position, KeyCode};
-use crate::custom::{Direction, Point, Velocity};
+use macroquad::input::{is_key_down, is_key_pressed, is_key_released, mouse_position, KeyCode};
+use crate::custom::{Direction, Point};
 
 pub struct Cursor {
 }
@@ -16,7 +16,7 @@ impl Cursor {
 }
 
 pub struct Movement{
-    pub speed: f32,
+    pub speed: f32, // pixel per frame
     pub dir: Direction
 }
 
@@ -34,33 +34,42 @@ impl Movement {
     
     // 1 frame => 1 pixel * speed constant
     // (pixel * speed) per frame
-    pub fn read_and_set_vel(&mut self) -> Velocity {
+    pub fn set_dir(&mut self) {
+
+        let mut dir = self.dir.clone();
 
         //left
-        if is_key_down(KeyCode::A) {
-            self.dir.point.x += -1.0;
+        if is_key_pressed(KeyCode::A) {
+            dir.point.x += -1.0;
+        } else if is_key_released(KeyCode::A) {
+            dir.point.x += 1.0;
         }
 
         //right
-        if is_key_down(KeyCode::D) {
-            self.dir.point.x += 1.0;
+        if is_key_pressed(KeyCode::D) {
+            dir.point.x += 1.0;
+        } else if is_key_released(KeyCode::D) {
+            dir.point.x += -1.0;
         }
 
         //up
-        if is_key_down(KeyCode::W) {
-            self.dir.point.y += -1.0;
-        } 
+        if is_key_pressed(KeyCode::W) {
+            dir.point.y += -1.0;
+        } else if is_key_released(KeyCode::W) {
+            dir.point.y += 1.0;
+        }
 
         //down
-        if is_key_down(KeyCode::S) {
-            self.dir.point.y += 1.0;
+        if is_key_pressed(KeyCode::S) {
+            dir.point.y += 1.0;
+        } else if is_key_released(KeyCode::S) {
+            dir.point.y += -1.0;
         }
 
-        return Velocity{
-            point: Point {
-                x: self.speed * self.dir.point.x,
-                y: self.speed * self.dir.point.y,
-            }
-        }
+        self.dir.point = dir.point;
     }   
+
+    pub fn get_pos(&self) -> Point {
+        return  self.dir.point.clone() * self.speed;
+    }
 }

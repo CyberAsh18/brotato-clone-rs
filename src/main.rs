@@ -8,8 +8,8 @@ use background_map::BackgroundMap;
 
 mod player;
 use player::Player;
-
-mod gun;
+mod enemy;
+mod equipment;
 
 use core::time;
 use std::{thread::sleep, time::SystemTime};
@@ -47,32 +47,46 @@ async fn main() {
     };
     // player
     let mut player = Player::initialize();
-
     let mut mov = input::Movement::initialize(5.0);
+    let mut player_pos = Point {
+            x: 0.0,
+            y: 0.0,
+        };
+
+    //enemy
+    let mut enemy1 = enemy::Enemy::initialize(
+        Point {
+            x: 0.0,
+            y: 0.0,
+        }, 
+        1.0, 
+        None
+    );
 
     loop {
         let now = SystemTime::now();
         clear_background(BLACK);
 
         //input
-        let input_vel = input::Movement::read_and_set_vel(&mut mov);
+        mov.set_dir();
         let cursor_pos = input::Cursor::get_pos();
         //info!("cursor pos, x: {}, y: {}", cursor_pos.x, cursor_pos.y);
-        //process
+
+        player_pos += mov.get_pos();
+        //enemy1.chase(&player_pos);
+        info!("player pos, x: {}, y:{}, enemy pos, x: {}, y: {}", player_pos.x, player_pos.y,
+         enemy1.pos.x, enemy1.pos.y);
+        //info!("x: {}, y: {}", player_vel.point.x, player_vel.point.y);
+
         //camera
-        let bg_cam = bg_map.camera(&input_vel);
-        let player_cam = Player::camera(
-            &mut player, 
-            bg_cam.0, 
-            &input_vel,
-            &bg_map_size
-        );
+        let bg_cam = bg_map.camera(&player_pos);
+        let player_cam= player.camera(bg_cam.0, &player_pos, &bg_map_size);
 
         //draw
         bg_map.draw(bg_cam.1);
-
         Player::draw_temp(player_cam.1, cursor_pos);
-
+        enemy1.draw();
+        
         fps_control(now);
         next_frame().await
     }

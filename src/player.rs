@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 
 use macroquad::prelude::*;
-use crate::custom::{BoundaryHit, Point, Velocity};
+use crate::custom::{BoundaryHit, Point};
 
 const WIDTH: f32 = 32.0;
 const HEIGHT: f32 = 32.0;
@@ -35,10 +35,8 @@ impl Player {
         }
     }
 
-    pub fn camera(&mut self, map_boundary_hit: BoundaryHit, vel : &Velocity, bg_map_size: &Point) -> (BoundaryHit, Velocity) {
-        let mut mut_vel = Velocity {
-            point: self.origin.clone(),
-        };
+    pub fn camera(&mut self, map_boundary_hit: BoundaryHit, pos : &Point, bg_map_size: &Point) -> (BoundaryHit, Point) {
+        let mut mut_pos =  self.origin.clone();
         let mut boundary_hit = BoundaryHit {
             left: false,
             right: false,
@@ -47,35 +45,35 @@ impl Player {
         };
 
         if map_boundary_hit.left {
-            mut_vel.point.x += vel.point.x;
+            mut_pos.x += pos.x;
         } 
 
         if map_boundary_hit.right {
-            mut_vel.point.x += vel.point.x - (bg_map_size.x - screen_width());
+            mut_pos.x += pos.x - (bg_map_size.x - screen_width());
         }
 
         if map_boundary_hit.top {
-            mut_vel.point.y += vel.point.y;
+            mut_pos.y += pos.y;
         } 
 
         if map_boundary_hit.bottom {
-            mut_vel.point.y += vel.point.y - (bg_map_size.y - screen_height());
+            mut_pos.y += pos.y - (bg_map_size.y - screen_height());
         }
 
-        return (boundary_hit, mut_vel);
+        return (boundary_hit, mut_pos);
     }
 
     ///rotation should be in radians
-    pub fn draw_temp(vel : Velocity, cursor_pos: Point) {
+    pub fn draw_temp(pos : Point, cursor_pos: Point) {
 
-        draw_rectangle(vel.point.x, vel.point.y, WIDTH, HEIGHT, ORANGE);
+        draw_rectangle(pos.x, pos.y, WIDTH, HEIGHT, ORANGE);
 
         //draw gun
         let gun_width = WIDTH * 1.2;
         let gun_height = HEIGHT / 4.0;
         
-        let mut  x = vel.point.x + (WIDTH/2.0);
-        let mut  y = vel.point.y + (HEIGHT/2.0) - gun_height/2.0 ;
+        let mut  x = pos.x + (WIDTH/2.0);
+        let mut  y = pos.y + (HEIGHT/2.0) - gun_height/2.0 ;
 
         let dis = f32::sqrt(f32::powf(cursor_pos.x - x, 2.0) + f32::powf(cursor_pos.y - y, 2.0));
         let mut theta = ((cursor_pos.y - y) / dis).acos();
@@ -85,7 +83,7 @@ impl Player {
         } else {
             theta = PI/2.0 - theta;
         }
-        
+
         x = x + theta.cos();
         y = y + theta.sin() + gun_height/2.0;
 
@@ -106,7 +104,7 @@ impl Player {
             params);
     }
 
-    pub fn draw(&self, x: i32, y: i32) {
+    fn draw(&self, x: i32, y: i32) {
         // draw_texture_ex(
         //     &self.background_img,
         //     origin_x + x as f32,

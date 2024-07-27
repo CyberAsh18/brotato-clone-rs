@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::custom::{self, BoundaryHit, Point, Velocity};
+use crate::custom::{self, BoundaryHit, Point};
 
 pub struct BackgroundMap {
     pub background_img: Texture2D,
@@ -26,12 +26,10 @@ impl BackgroundMap {
         }
     }
 
-    pub fn camera(&mut self, vel : &Velocity) -> (BoundaryHit, Velocity) {
-        let mut mut_vel = Velocity {
-            point: Point {
-                x: -1.0 * vel.point.x,
-                y: -1.0 * vel.point.y,
-            }
+    pub fn camera(&mut self, pos : &Point) -> (BoundaryHit, Point) {
+        let mut mut_pos = Point {
+                x: -1.0 * pos.x,
+                y: -1.0 * pos.y,
         };
         let mut boundary_hit = BoundaryHit {
             left: false,
@@ -39,33 +37,33 @@ impl BackgroundMap {
             top: false,
             bottom: false,
         };
-        if mut_vel.point.x >= 0.0 {
-            mut_vel.point.x = 0.0;
+        if mut_pos.x >= 0.0 {
+            mut_pos.x = 0.0;
             boundary_hit.left = true;
         }
 
-        if mut_vel.point.y >= 0.0 {
-            mut_vel.point.y = 0.0;
+        if mut_pos.y >= 0.0 {
+            mut_pos.y = 0.0;
             boundary_hit.top = true;
         }
 
-        if mut_vel.point.x <= -1.0 * (self.background_img.width() - screen_width()) {
-            mut_vel.point.x = -1.0 * (self.background_img.width() - screen_width());
+        if mut_pos.x <= -1.0 * (self.background_img.width() - screen_width()) {
+            mut_pos.x = -1.0 * (self.background_img.width() - screen_width());
             boundary_hit.right = true;
         }
 
-        if mut_vel.point.y <= -1.0 * (self.background_img.height() - screen_height()) {
-            mut_vel.point.y = -1.0 * (self.background_img.height() - screen_height());
+        if mut_pos.y <= -1.0 * (self.background_img.height() - screen_height()) {
+            mut_pos.y = -1.0 * (self.background_img.height() - screen_height());
             boundary_hit.bottom = true;
         }
-        return (boundary_hit, mut_vel);
+        return (boundary_hit, mut_pos);
     }
 
-    pub fn draw(&mut self, vel: Velocity) {
+    pub fn draw(&mut self, pos: Point) {
         draw_texture_ex(
             &self.background_img,
-            vel.point.x,
-            vel.point.y,
+            pos.x,
+            pos.y,
             WHITE,
             DrawTextureParams{
                 dest_size: Some(
