@@ -9,6 +9,8 @@ use background_map::BackgroundMap;
 mod player;
 use player::Player;
 
+mod gun;
+
 use core::time;
 use std::{thread::sleep, time::SystemTime};
 
@@ -54,7 +56,8 @@ async fn main() {
 
         //input
         let input_vel = input::Movement::read_and_set_vel(&mut mov);
-
+        let cursor_pos = input::Cursor::get_pos();
+        //info!("cursor pos, x: {}, y: {}", cursor_pos.x, cursor_pos.y);
         //process
         //camera
         let bg_cam = bg_map.camera(&input_vel);
@@ -67,7 +70,8 @@ async fn main() {
 
         //draw
         bg_map.draw(bg_cam.1);
-        Player::draw_temp(player_cam.1);
+
+        Player::draw_temp(player_cam.1, cursor_pos);
 
         fps_control(now);
         next_frame().await

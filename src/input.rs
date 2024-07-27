@@ -1,6 +1,19 @@
 use macroquad::logging::info;
-use macroquad::input::{is_key_down, KeyCode};
+use macroquad::input::{is_key_down, mouse_position, KeyCode};
 use crate::custom::{Direction, Point, Velocity};
+
+pub struct Cursor {
+}
+
+impl Cursor {
+    pub fn get_pos() -> Point {
+        let pos = mouse_position();
+        return Point {
+            x: pos.0,
+            y: pos.1
+        }
+    }
+}
 
 pub struct Movement{
     pub speed: f32,

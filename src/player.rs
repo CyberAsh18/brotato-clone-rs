@@ -1,3 +1,5 @@
+use std::f32::consts::PI;
+
 use macroquad::prelude::*;
 use crate::custom::{BoundaryHit, Point, Velocity};
 
@@ -63,21 +65,36 @@ impl Player {
         return (boundary_hit, mut_vel);
     }
 
-    pub fn draw_temp(vel : Velocity) {
+    ///rotation should be in radians
+    pub fn draw_temp(vel : Velocity, cursor_pos: Point) {
+
         draw_rectangle(vel.point.x, vel.point.y, WIDTH, HEIGHT, ORANGE);
-        
+
+        //draw gun
         let gun_width = WIDTH * 1.2;
         let gun_height = HEIGHT / 4.0;
-        let x = vel.point.x + (WIDTH / 2.0);
-        let y = vel.point.y + (HEIGHT/2.0) - gun_height/2.0;
-        let rot_angle = 120.0_f32;
+        
+        let mut  x = vel.point.x + (WIDTH/2.0);
+        let mut  y = vel.point.y + (HEIGHT/2.0) - gun_height/2.0 ;
+
+        let dis = f32::sqrt(f32::powf(cursor_pos.x - x, 2.0) + f32::powf(cursor_pos.y - y, 2.0));
+        let mut theta = ((cursor_pos.y - y) / dis).acos();
+
+        if cursor_pos.x < x {
+            theta = PI/2.0 + theta;
+        } else {
+            theta = PI/2.0 - theta;
+        }
+        
+        x = x + theta.cos();
+        y = y + theta.sin() + gun_height/2.0;
 
         let params = DrawRectangleParams {
             offset: Vec2 {
                 x: 0.0,
-                y: 0.0
+                y: 0.5
             },
-            rotation: rot_angle.to_radians(),
+            rotation: theta,
             color: PURPLE
         };
 
