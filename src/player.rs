@@ -53,25 +53,25 @@ impl Player {
     pub fn update_pos(&mut self, map: &mut BackgroundMap) {
         self.mov.set_dir();
         let vel = self.mov.get_pos();
-        let pos = self.pos.clone() + vel.clone() + map.pos.clone() * -1.0;
+        let pos = self.pos.clone() + vel.clone();
 
         let screen_half_size_x = screen_width()/2.0 - self.size.x / 2.0;
         let screen_half_size_y = screen_height()/2.0 - self.size.y / 2.0;
         
-        if pos.x < (screen_half_size_x)
-        || pos.x > (map.background_img.width() - screen_half_size_x) {
-            self.pos.x = self.pos.x + vel.x;
+        if pos.x < (screen_half_size_x + map.pos.x)
+        || pos.x > (map.background_img.width() - screen_half_size_x + map.pos.x) {
+            self.pos.x += vel.x;
         } else {
             //move the background
-            map.pos.x = map.pos.x - vel.x;
+            map.pos.x -= vel.x;
         }
 
-        if pos.y < (screen_half_size_y)
-        || pos.y > (map.background_img.height() - screen_half_size_y)  {
-            self.pos.y = self.pos.y + vel.y;
+        if pos.y < (screen_half_size_y + map.pos.y)
+        || pos.y > (map.background_img.height() - screen_half_size_y + map.pos.y)  {
+            self.pos.y += vel.y;
         } else {
             //move the background
-            map.pos.y = map.pos.y - vel.y;
+            map.pos.y -= vel.y;
         }
         
     }
