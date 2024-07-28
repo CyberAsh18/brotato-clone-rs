@@ -69,7 +69,7 @@ async fn main() {
 
         //input
         mov.set_dir();
-        let cursor_pos = input::Cursor::get_pos();
+        let cursor_pos = input::get_cursor_pos();
         //info!("cursor pos, x: {}, y: {}", cursor_pos.x, cursor_pos.y);
 
         player_pos += mov.get_pos();
