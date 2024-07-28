@@ -1,4 +1,4 @@
-use std::ops::{AddAssign, Mul};
+use std::ops::{AddAssign, Mul, Add};
 
 #[derive(Clone)]
 pub struct Point{
@@ -26,11 +26,14 @@ impl AddAssign for Point {
     }
 }
 
-pub struct BoundaryHit {
-    pub left: bool,
-    pub right: bool,
-    pub top: bool,
-    pub bottom: bool,
+impl Add for Point {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
 }
 
 #[derive(Clone)]

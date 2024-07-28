@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 use crate::{custom::Point, equipment};
 
-//enemy ai
+// enemy ai
 // move towards the player
 // try attaking the player if the enemy has a weapon
 // if enemy collides with player, reduce player's hp

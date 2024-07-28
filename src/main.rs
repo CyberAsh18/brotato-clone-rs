@@ -41,17 +41,9 @@ async fn main() {
         return;
     }
     let mut bg_map = bg_map.unwrap();
-    let bg_map_size = Point {
-        x: bg_map.background_img.width(),
-        y: bg_map.background_img.height(),
-    };
+    
     // player
-    let mut player = Player::initialize();
-    let mut mov = input::Movement::initialize(5.0);
-    let mut player_pos = Point {
-            x: 0.0,
-            y: 0.0,
-        };
+    let mut player = Player::initialize(5.0);
 
     //enemy
     let mut enemy1 = enemy::Enemy::initialize(
@@ -68,23 +60,16 @@ async fn main() {
         clear_background(BLACK);
 
         //input
-        mov.set_dir();
         let cursor_pos = input::get_cursor_pos();
         //info!("cursor pos, x: {}, y: {}", cursor_pos.x, cursor_pos.y);
 
-        player_pos += mov.get_pos();
+        //updates the players and the backgrounds pos
+        player.update_pos(&mut bg_map);
         //enemy1.chase(&player_pos);
-        info!("player pos, x: {}, y:{}, enemy pos, x: {}, y: {}", player_pos.x, player_pos.y,
-         enemy1.pos.x, enemy1.pos.y);
-        //info!("x: {}, y: {}", player_vel.point.x, player_vel.point.y);
 
-        //camera
-        let bg_cam = bg_map.camera(&player_pos);
-        let player_cam= player.camera(bg_cam.0, &player_pos, &bg_map_size);
-
-        //draw
-        bg_map.draw(bg_cam.1);
-        Player::draw_temp(player_cam.1, cursor_pos);
+        // draw
+        bg_map.draw();
+        player.draw_temp(cursor_pos);
         enemy1.draw();
         
         fps_control(now);

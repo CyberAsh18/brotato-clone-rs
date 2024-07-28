@@ -16,16 +16,6 @@ pub struct Movement{
 }
 
 impl Movement {
-    ///speed here is the pixel per frame
-    pub fn initialize(speed: f32) -> Movement {
-        info!("initialized movement!");
-        return Movement { speed, dir: Direction { 
-            point: Point {
-                x: 0.0,
-                y: 0.0
-            }
-        } }
-    }
     
     // 1 frame => 1 pixel * speed constant
     // (pixel * speed) per frame
