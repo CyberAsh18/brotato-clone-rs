@@ -51,8 +51,18 @@ async fn main() {
             x: 0.0,
             y: 0.0,
         }, 
-        1.0, 
-        None
+        1.9, 
+        None,
+        RED,
+    );
+    let mut enemy2 = enemy::Enemy::initialize(
+        Point {
+            x: screen_width() / 2.0,
+            y: 0.0,
+        }, 
+        2.1, 
+        None,
+        PINK,
     );
 
     loop {
@@ -65,12 +75,14 @@ async fn main() {
 
         //updates the players and the backgrounds pos
         player.update_pos(&mut bg_map);
-        //enemy1.chase(&player_pos);
+        enemy1.chase(&player, &bg_map);
+        enemy2.chase(&player, &bg_map);
 
         // draw
         bg_map.draw();
         player.draw_temp(cursor_pos);
-        enemy1.draw();
+        enemy1.draw(&bg_map);
+        enemy2.draw(&bg_map);
         
         fps_control(now);
         next_frame().await

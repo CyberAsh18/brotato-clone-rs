@@ -51,8 +51,6 @@ impl Player {
     }
 
     pub fn update_pos(&mut self, map: &mut BackgroundMap) {
-
-        //move only at the edges
         self.mov.set_dir();
         let vel = self.mov.get_pos();
         let pos = self.pos.clone() + vel.clone() + map.pos.clone() * -1.0;
