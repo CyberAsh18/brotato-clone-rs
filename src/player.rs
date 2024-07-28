@@ -58,18 +58,16 @@ impl Player {
         let screen_half_size_x = screen_width()/2.0 - self.size.x / 2.0;
         let screen_half_size_y = screen_height()/2.0 - self.size.y / 2.0;
         
-        if pos.x < (screen_half_size_x) {
-            self.pos.x = self.pos.x + vel.x;
-        } else if pos.x > (map.background_img.width() - screen_half_size_x - self.size.x)  {
+        if pos.x < (screen_half_size_x)
+        || pos.x > (map.background_img.width() - screen_half_size_x) {
             self.pos.x = self.pos.x + vel.x;
         } else {
             //move the background
             map.pos.x = map.pos.x - vel.x;
         }
 
-        if pos.y < (screen_half_size_y)  {
-            self.pos.y = self.pos.y + vel.y;
-        } else if pos.y > (map.background_img.height() - screen_half_size_y - self.size.y) {
+        if pos.y < (screen_half_size_y)
+        || pos.y > (map.background_img.height() - screen_half_size_y)  {
             self.pos.y = self.pos.y + vel.y;
         } else {
             //move the background

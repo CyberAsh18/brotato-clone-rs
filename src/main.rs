@@ -43,7 +43,7 @@ async fn main() {
     let mut bg_map = bg_map.unwrap();
     
     // player
-    let mut player = Player::initialize(5.0);
+    let mut player = Player::initialize(15.0);
 
     //enemy
     let mut enemy1 = enemy::Enemy::initialize(

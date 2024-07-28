@@ -34,9 +34,8 @@ impl Enemy {
         let pos_x = self.pos.x + bg_map.pos.x;
         let pos_y = self.pos.y + bg_map.pos.y;
         
-        //to do
         let mut theta = ((player.pos.y - pos_y) / (player.pos.x - pos_x)).atan();
-        if player.pos.x - pos_x < 0.0{
+        if player.pos.x - pos_x < 0.0 {
             theta = theta - PI;
         }
         // info!("angle: {}, y2: {},y1: {},x2: {},x1: {},", 
@@ -45,6 +44,7 @@ impl Enemy {
         // pos_y,
         // player.pos.x,
         // pos_x);
+
         self.pos = Point {
             x: self.pos.x + self.speed * theta.cos(),
             y: self.pos.y + self.speed * theta.sin(),
