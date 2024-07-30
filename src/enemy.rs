@@ -14,16 +14,14 @@ const HEIGHT: f32 = 16.0;
 pub struct Enemy{
     pub pos: Point,
     speed: f32, //pixel per frame
-    weapon: Option<equipment::Gun>,
     color: Color,
 }
 
 impl Enemy {
-    pub fn initialize(pos: Point, speed: f32, weapon: Option<equipment::Gun>, color: Color) -> Enemy {
+    pub fn initialize(pos: Point, speed: f32, color: Color) -> Enemy {
         return Enemy {
             pos,
             speed,
-            weapon,
             color,
         }
     }
