@@ -44,8 +44,8 @@ impl Enemy {
         // pos_x);
 
         self.pos = Point {
-            x: self.pos.x + self.speed * theta.cos(),
-            y: self.pos.y + self.speed * theta.sin(),
+            x: self.pos.x + self.speed * get_frame_time() * theta.cos(),
+            y: self.pos.y + self.speed * get_frame_time() * theta.sin(),
         };
     }
 

@@ -1,5 +1,6 @@
 use macroquad::logging::info;
 use macroquad::input::{is_key_pressed, is_key_released, mouse_position, KeyCode};
+use macroquad::time::get_frame_time;
 use crate::custom::{Direction, Point};
 
 pub fn get_cursor_pos() -> Point {
@@ -51,6 +52,6 @@ impl Movement {
     }   
 
     pub fn get_pos(&self) -> Point {
-        return  self.dir.point.clone() * self.speed;
+        return  self.dir.point.clone() * self.speed * get_frame_time();
     }
 }
