@@ -58,7 +58,6 @@ impl Player {
         let screen_half_size_x = screen_width()/2.0 - self.size.x / 2.0;
         let screen_half_size_y = screen_height()/2.0 - self.size.y / 2.0;
         
-         //transition from mid -> left
         if pos.x < screen_half_size_x + map.pos.x {
             self.pos.x += vel.x;
             map.pos.x = 0.0;

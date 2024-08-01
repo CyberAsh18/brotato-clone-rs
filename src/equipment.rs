@@ -73,10 +73,11 @@ impl Gun {
         //self.speed * get_frame_time() <= the speed of the projectile per unit time
         //rate_of_fire
         if mouse_left_pressed && (self.time_count > 1.0/self.rate_of_fire)  {
+            //info!("gunpos, x: {}, y: {}, projectile_pos, x: {}, y: {}", self.pos.x, self.pos.y, x, y);
             self.projectile.push(Projectile {
                 pos: Point {
-                    x,
-                    y,
+                    x: x,
+                    y: y,
                 },
                 size: Point {
                     x: gun_height,
@@ -85,7 +86,7 @@ impl Gun {
                 params : params.clone(),
             });
             self.time_count = 0.0;
-            info!("mouse clicked, timecount: {}", self.time_count);
+            //info!("mouse clicked, timecount: {}", self.time_count);
         }
 
         self.time_count += get_frame_time();
@@ -98,29 +99,20 @@ impl Gun {
             params);
     }
 
-    pub fn draw_projectiles(&mut self,  bg_map: &BackgroundMap, player: &Player) {
+    pub fn draw_projectiles(&mut self, bg_map: &BackgroundMap, player: &Player) {
 
         for proj in self.projectile.iter_mut() {
             proj.pos.x = proj.pos.x + proj.params.rotation.cos() * self.projectile_speed * get_frame_time();
             proj.pos.y = proj.pos.y + proj.params.rotation.sin() * self.projectile_speed * get_frame_time() ;
 
-            let mut pos_x = proj.pos.x;
-            let mut pos_y = proj.pos.y;
-
-            // if player.pos.x == (screen_width()/2.0 - player.size.x/2.0) {
-            //     pos_x += bg_map.pos.x;
-            // }
-
-            if player.pos.y == (screen_height()/2.0 - player.size.y/2.0) {
-                pos_y += bg_map.pos.y;
-            }
-            
             draw_rectangle_ex(
-                pos_x,
-                pos_y,
+                proj.pos.x,
+                proj.pos.y,
                 proj.size.x,
                 proj.size.y,
                 proj.params.clone());
+
+            
         }
     }
 }
