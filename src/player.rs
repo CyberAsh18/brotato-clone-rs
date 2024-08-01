@@ -58,26 +58,26 @@ impl Player {
         let screen_half_size_x = screen_width()/2.0 - self.size.x / 2.0;
         let screen_half_size_y = screen_height()/2.0 - self.size.y / 2.0;
         
-        if pos.x < (screen_half_size_x + map.pos.x) {
+         //transition from mid -> left
+        if pos.x < screen_half_size_x + map.pos.x {
             self.pos.x += vel.x;
             map.pos.x = 0.0;
-        } else if pos.x >= (map.background_img.width() + map.pos.x - screen_half_size_x) { 
+        } else if pos.x > screen_half_size_x + map.pos.x + map.background_img.width() - screen_width() {
             self.pos.x += vel.x;
-        }else { //move the background
-            self.pos.x = screen_half_size_x;
+        } else {
             map.pos.x -= vel.x;
+            self.pos.x = screen_half_size_x;
         }
 
-        if pos.y < (screen_half_size_y + map.pos.y) {
+        if pos.y < screen_half_size_y + map.pos.y  {
             self.pos.y += vel.y;
             map.pos.y = 0.0;
-        } else if pos.y >= (map.background_img.height() + map.pos.y - screen_half_size_y ) {
+        } else if pos.y > screen_half_size_y + map.pos.y + map.background_img.height() - screen_height() {
             self.pos.y += vel.y;
-        } else { //move the background
-            self.pos.y = screen_half_size_y;
+        } else {
             map.pos.y -= vel.y;
+            self.pos.y = screen_half_size_y;
         }
-        
     }
 
     pub fn draw_temp(&self) {
