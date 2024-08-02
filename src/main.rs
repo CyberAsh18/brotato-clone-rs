@@ -2,15 +2,14 @@ mod input;
 mod process;
 mod output;
 mod custom;
-
 mod background_map;
-use background_map::BackgroundMap;
-
 mod player;
-use equipment::Gun;
-use player::Player;
 mod enemy;
 mod equipment;
+
+use background_map::BackgroundMap;
+use equipment::Gun;
+use player::Player;
 
 use core::time;
 use std::{thread::sleep, time::SystemTime};
@@ -18,13 +17,16 @@ use std::{thread::sleep, time::SystemTime};
 use custom::Point;
 use macroquad::prelude::*;
 
+
 const FPS: f32 = 60.0;
+const WINDOW_WIDTH: f32 = 640.0;
+const WINDOW_HEIGHT: f32 = 480.0;
 
 fn conf() -> Conf {
     Conf{
         window_title: "Ash's Super Duper Game".to_string(),
-        window_width: 640,
-        window_height: 480,
+        window_width: WINDOW_WIDTH as i32,
+        window_height: WINDOW_HEIGHT as i32,
         fullscreen: false,
         window_resizable: false,
         ..Default::default()
@@ -61,12 +63,13 @@ async fn main() {
     );
     let mut enemy2 = enemy::Enemy::initialize(
         Point {
-            x: screen_width() / 2.0,
+            x: WINDOW_WIDTH / 2.0,
             y: 0.0,
         }, 
         170.0, 
         PINK,
     );
+
 
     loop {
         let now = SystemTime::now();
@@ -90,7 +93,7 @@ async fn main() {
         player_gun.draw_projectiles(&bg_map, &player);
         enemy1.draw(&bg_map);
         enemy2.draw(&bg_map);
-        
+
         fps_control(now);
         next_frame().await
     }

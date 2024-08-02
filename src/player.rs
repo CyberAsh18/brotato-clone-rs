@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 
 use macroquad::prelude::*;
-use crate::{custom::{Direction, Point}, equipment, input::Movement, BackgroundMap};
+use crate::{custom::{Direction, Point}, equipment, input::Movement, BackgroundMap, WINDOW_HEIGHT, WINDOW_WIDTH};
 
 const WIDTH: f32 = 32.0;
 const HEIGHT: f32 = 32.0;
@@ -31,8 +31,8 @@ impl Player {
         // }
         return Player {
             pos: Point {
-                x: screen_width()/2.0 - WIDTH/2.0,
-                y: screen_height()/2.0 - HEIGHT/2.0,
+                x: WINDOW_WIDTH/2.0 - WIDTH/2.0,
+                y: WINDOW_HEIGHT/2.0 - HEIGHT/2.0,
             },
             mov: Movement {
                 speed,
@@ -46,7 +46,7 @@ impl Player {
             size: Point {
                 x: WIDTH,
                 y: HEIGHT,
-            }
+            },
         }
     }
 
@@ -55,13 +55,13 @@ impl Player {
         let vel = self.mov.get_pos();
         let pos = self.pos.clone() + vel.clone();
 
-        let screen_half_size_x = screen_width()/2.0 - self.size.x / 2.0;
-        let screen_half_size_y = screen_height()/2.0 - self.size.y / 2.0;
+        let screen_half_size_x = WINDOW_WIDTH/2.0 - self.size.x / 2.0;
+        let screen_half_size_y = WINDOW_HEIGHT/2.0 - self.size.y / 2.0;
         
         if pos.x < screen_half_size_x + map.pos.x {
             self.pos.x += vel.x;
             map.pos.x = 0.0;
-        } else if pos.x > screen_half_size_x + map.pos.x + map.background_img.width() - screen_width() {
+        } else if pos.x > screen_half_size_x + map.pos.x + map.background_img.width() - WINDOW_WIDTH {
             self.pos.x += vel.x;
         } else {
             map.pos.x -= vel.x;

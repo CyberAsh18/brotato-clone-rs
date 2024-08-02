@@ -1,7 +1,7 @@
 use std::{f32::consts::PI, sync::Arc};
 
 use macroquad::{audio::PlaySoundParams, prelude::*};
-use crate::{custom::Point, player::Player, BackgroundMap};
+use crate::{custom::Point, player::Player, BackgroundMap, WINDOW_HEIGHT, WINDOW_WIDTH};
 
 struct Projectile {
     pos: Point,
@@ -99,8 +99,8 @@ impl Gun {
     pub fn draw_projectiles(&mut self, bg_map: &BackgroundMap, player: &Player) {
 
         self.projectile.retain_mut(| proj | {
-            let screen_half_size_x = screen_width()/2.0;
-            let screen_half_size_y = screen_height()/2.0;
+            let screen_half_size_x = WINDOW_WIDTH/2.0;
+            let screen_half_size_y = WINDOW_HEIGHT/2.0;
                 proj.pos.x = proj.pos.x + proj.params.rotation.cos() * self.projectile_speed * get_frame_time();
                 proj.pos.y = proj.pos.y + proj.params.rotation.sin() * self.projectile_speed * get_frame_time();
                 if (proj.pos.x - bg_map.pos.x - screen_half_size_x) > bg_map.background_img.width() 
