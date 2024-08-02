@@ -3,6 +3,9 @@ use std::f32::consts::PI;
 use macroquad::prelude::*;
 use crate::{background_map::BackgroundMap, custom::Point, equipment, player::Player};
 
+//import the rapier library for collision detection
+//will have to port the current simple quads to rigid bodies and their velocity calculations
+
 // enemy ai
 // move towards the player
 // try attaking the player if the enemy has a weapon
