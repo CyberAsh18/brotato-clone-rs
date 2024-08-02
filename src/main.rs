@@ -86,7 +86,7 @@ async fn main() {
         // draw
         bg_map.draw();
         player.draw_temp();
-        player_gun.draw_gun(cursor_pos, mouse_left_pressed);
+        player_gun.draw_gun(&bg_map, cursor_pos, mouse_left_pressed);
         player_gun.draw_projectiles(&bg_map, &player);
         enemy1.draw(&bg_map);
         enemy2.draw(&bg_map);

@@ -41,7 +41,7 @@ impl Gun {
         self.pos = pos;
     }
 
-    pub fn draw_gun(&mut self, point_to_pos: Point, mouse_left_pressed: bool) {
+    pub fn draw_gun(&mut self, bg_map: &BackgroundMap, point_to_pos: Point, mouse_left_pressed: bool) {
         //draw gun
         let gun_width = self.size.x * 1.2;
         let gun_height = self.size.y / 4.0;
@@ -70,14 +70,11 @@ impl Gun {
             color: PURPLE
         };
 
-        //self.speed * get_frame_time() <= the speed of the projectile per unit time
-        //rate_of_fire
         if mouse_left_pressed && (self.time_count > 1.0/self.rate_of_fire)  {
-            //info!("gunpos, x: {}, y: {}, projectile_pos, x: {}, y: {}", self.pos.x, self.pos.y, x, y);
             self.projectile.push(Projectile {
                 pos: Point {
-                    x: x,
-                    y: y,
+                    x: x - bg_map.pos.x,
+                    y: y - bg_map.pos.y,
                 },
                 size: Point {
                     x: gun_height,
@@ -86,7 +83,7 @@ impl Gun {
                 params : params.clone(),
             });
             self.time_count = 0.0;
-            //info!("mouse clicked, timecount: {}", self.time_count);
+            info!("mouse clicked, timecount: {}", self.time_count);
         }
 
         self.time_count += get_frame_time();
@@ -101,19 +98,28 @@ impl Gun {
 
     pub fn draw_projectiles(&mut self, bg_map: &BackgroundMap, player: &Player) {
 
-        for proj in self.projectile.iter_mut() {
-            proj.pos.x = proj.pos.x + proj.params.rotation.cos() * self.projectile_speed * get_frame_time();
-            proj.pos.y = proj.pos.y + proj.params.rotation.sin() * self.projectile_speed * get_frame_time() ;
-
-            draw_rectangle_ex(
-                proj.pos.x,
-                proj.pos.y,
-                proj.size.x,
-                proj.size.y,
-                proj.params.clone());
-
-            
-        }
+        self.projectile.retain_mut(| proj | {
+            let screen_half_size_x = screen_width()/2.0;
+            let screen_half_size_y = screen_height()/2.0;
+                proj.pos.x = proj.pos.x + proj.params.rotation.cos() * self.projectile_speed * get_frame_time();
+                proj.pos.y = proj.pos.y + proj.params.rotation.sin() * self.projectile_speed * get_frame_time();
+                if (proj.pos.x - bg_map.pos.x - screen_half_size_x) > bg_map.background_img.width() 
+                || (proj.pos.y - bg_map.pos.y - screen_half_size_y) > bg_map.background_img.height() 
+                || (proj.pos.x - bg_map.pos.x) < 0.0
+                || (proj.pos.y - bg_map.pos.y) < 0.0 {
+                    info!("removed projectile");
+                    false //remove this
+                } else {
+                    draw_rectangle_ex(
+                        proj.pos.x + bg_map.pos.x,
+                        proj.pos.y + bg_map.pos.y,
+                        proj.size.x,
+                        proj.size.y,
+                        proj.params.clone());
+                    true //retain this
+            }
+        });
+        
     }
 }
 
