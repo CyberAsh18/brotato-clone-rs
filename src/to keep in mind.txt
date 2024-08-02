@@ -1,0 +1,3 @@
+the global coordinates always follows the screen, which means, the top left of the screen is always 0,0 (origin point)
+everything moves relative to this top left origin point
+this logic means that the player's position will always be within the coordinates (0,0) and (screen_width, screen_height) 

@@ -22,7 +22,7 @@ const FPS: f32 = 60.0;
 
 fn conf() -> Conf {
     Conf{
-        window_title: "WormGrounds".to_string(),
+        window_title: "Ash's Super Duper Game".to_string(),
         window_width: 640,
         window_height: 480,
         fullscreen: false,
@@ -47,8 +47,8 @@ async fn main() {
     let mut player = Player::initialize(200.0);
     let mut player_gun = Gun::initialize(
         player.size.clone(),
-        50.0,
-        2.0,
+        500.0,
+        3.0,
         0.0);
     //enemy
     let mut enemy1 = enemy::Enemy::initialize(
@@ -86,7 +86,7 @@ async fn main() {
         // draw
         bg_map.draw();
         player.draw_temp();
-        player_gun.draw_gun(cursor_pos, mouse_left_pressed);
+        player_gun.draw_gun(&bg_map, cursor_pos, mouse_left_pressed);
         player_gun.draw_projectiles(&bg_map, &player);
         enemy1.draw(&bg_map);
         enemy2.draw(&bg_map);
