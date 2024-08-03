@@ -1,11 +1,8 @@
 use std::f32::consts::PI;
 
 use macroquad::prelude::*;
-use parry2d::{bounding_volume::Aabb, na::{OPoint, Point2}, query::point};
+use parry2d::{bounding_volume::Aabb, na::Point2};
 use crate::{background_map::BackgroundMap, collision::Collision, custom::Point, equipment::Projectile, player::Player};
-
-//import the rapier library for collision detection
-//will have to port the current simple quads to rigid bodies and their velocity calculations
 
 // enemy ai
 // move towards the player
