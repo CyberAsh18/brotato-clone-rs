@@ -19,7 +19,7 @@ impl Movement {
     
     // 1 frame => 1 pixel * speed constant
     // (pixel * speed) per frame
-    pub fn set_dir(&mut self) {
+    pub fn register_keyboard_press(&mut self) -> Point {
         
         //left
         if is_key_pressed(KeyCode::A) {
@@ -48,9 +48,7 @@ impl Movement {
         } else if is_key_released(KeyCode::S) {
             self.dir.point.y += -1.0;
         }
-    }   
 
-    pub fn get_pos(&self) -> Point {
-        return  self.dir.point.clone() * self.speed * get_frame_time();
-    }
+        return self.dir.point.clone() * self.speed * get_frame_time();
+    }   
 }

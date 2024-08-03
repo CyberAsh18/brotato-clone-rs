@@ -34,10 +34,8 @@ impl Player {
         }
     }
 
-    pub fn update_pos(&mut self, map: &mut BackgroundMap) {
-        self.mov.set_dir();
-        let vel = self.mov.get_pos();
-        let pos = self.pos.clone() + vel.clone();
+    pub fn update_pos(&mut self, map: &mut BackgroundMap, player_vel: &Point) {
+        let pos =  self.pos.clone() + player_vel.clone();
 
         let screen_half_size_x = WINDOW_WIDTH/2.0 - self.size.x / 2.0;
         let screen_half_size_y = WINDOW_HEIGHT/2.0 - self.size.y / 2.0;
@@ -48,7 +46,7 @@ impl Player {
                 //boundary
                 self.pos.x = WORLDBITSIZE;
             }else {
-                self.pos.x += vel.x;
+                self.pos.x += player_vel.x;
             }
             map.pos.x = 0.0;
         } else if pos.x > screen_half_size_x + map.pos.x + map.background_img.width() - WINDOW_WIDTH {
@@ -56,10 +54,10 @@ impl Player {
                 //boundary
                 self.pos.x = WINDOW_WIDTH - self.size.x - WORLDBITSIZE;
             } else {
-                self.pos.x += vel.x;
+                self.pos.x += player_vel.x;
             }
         } else {
-            map.pos.x -= vel.x;
+            map.pos.x -= player_vel.x;
             self.pos.x = screen_half_size_x;
         }
 
@@ -68,7 +66,7 @@ impl Player {
                 //boundary
                 self.pos.y = WORLDBITSIZE;
             } else {
-                self.pos.y += vel.y;
+                self.pos.y += player_vel.y;
             }
             map.pos.y = 0.0;
         } else if pos.y > screen_half_size_y + map.pos.y + map.background_img.height() - WINDOW_HEIGHT {
@@ -76,10 +74,10 @@ impl Player {
                 //boundary
                 self.pos.y = WINDOW_HEIGHT - self.size.y - WORLDBITSIZE;
             } else {
-                self.pos.y += vel.y;
+                self.pos.y += player_vel.y;
             }
         } else {
-            map.pos.y -= vel.y;
+            map.pos.y -= player_vel.y;
             self.pos.y = screen_half_size_y;
         }
     }

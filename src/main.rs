@@ -88,10 +88,10 @@ async fn main() {
         //input
         let cursor_pos = input::get_cursor_pos();
         let mouse_left_pressed = is_mouse_button_down(macroquad::input::MouseButton::Left);
-        //info!("cursor pos, x: {}, y: {}", cursor_pos.x, cursor_pos.y);
+        let player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
 
-        //updates the players and the backgrounds pos
-        player.update_pos(&mut bg_map);
+        //update
+        player.update_pos(&mut bg_map, &player_vel);
         player_gun.update_pos(&bg_map, &player);
         enemy1.chase(&player, &bg_map, &mut player_gun.projectile);
         enemy2.chase(&player, &bg_map, &mut player_gun.projectile);
