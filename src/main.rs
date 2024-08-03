@@ -5,6 +5,7 @@ mod player;
 mod enemy;
 mod equipment;
 mod collision;
+mod animation;
 
 use background_map::BackgroundMap;
 use enemy::Enemy;
@@ -46,10 +47,16 @@ async fn main() {
     let mut bg_map = bg_map.unwrap();
     
     // player
-    let mut player = Player::initialize(200.0);
+    let mut player = Player::initialize(
+        100.0, 
+        Some(&[
+            "assets\\topdown_shooter_assets\\sPlayerIdle_strip4.png",
+            "assets\\topdown_shooter_assets\\sPlayerRun_strip7.png"
+            ])).await;
+
     let mut player_gun = Gun::initialize(
         player.size.clone(),
-        500.0,
+        300.0,
         3.0,
         0.0);
         
@@ -65,7 +72,7 @@ async fn main() {
             x: 16.0,
             y: 16.0,
         },
-        160.0, 
+        50.0, 
         100.0,
         RED,
     );
@@ -78,7 +85,7 @@ async fn main() {
             x: 20.0,
             y: 20.0,
         },
-        170.0, 
+        30.0, 
         100.0,
         PINK,
     );
@@ -102,7 +109,7 @@ async fn main() {
 
         // draw
         bg_map.draw();
-        player.draw_temp();
+        player.draw(&player_vel);
         player_gun.draw_gun(&bg_map, cursor_pos, mouse_left_pressed);
         player_gun.draw_projectiles(&bg_map);
         enemy1.draw(&bg_map);
