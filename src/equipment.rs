@@ -3,9 +3,9 @@ use std::{f32::consts::PI, sync::Arc};
 use macroquad::{audio::PlaySoundParams, prelude::*};
 use crate::{custom::Point, player::Player, BackgroundMap, WINDOW_HEIGHT, WINDOW_WIDTH};
 
-struct Projectile {
-    pos: Point,
-    size: Point,
+pub struct Projectile {
+    pub pos: Point,
+    pub size: Point,
     params: DrawRectangleParams,
 }
 
@@ -15,7 +15,7 @@ pub struct Gun {
     projectile_speed: f32,
     rate_of_fire: f32,
     time_count: f32,
-    projectile: Vec<Projectile>,
+    pub projectile: Vec<Projectile>,
 }
 
 impl Gun {
@@ -37,8 +37,27 @@ impl Gun {
         };
     }
 
-    pub fn update_pos(&mut self, pos: Point) {
-        self.pos = pos;
+    pub fn update_pos(&mut self, bg_map: &BackgroundMap, player: &Player ) {
+        //update gun position
+        self.pos.x = player.pos.x;
+        self.pos.y = player.pos.y;
+
+        //update projectile position
+        self.projectile.retain_mut(| proj | {
+            let screen_half_size_x = WINDOW_WIDTH/2.0;
+            let screen_half_size_y = WINDOW_HEIGHT/2.0;
+                proj.pos.x = proj.pos.x + proj.params.rotation.cos() * self.projectile_speed * get_frame_time();
+                proj.pos.y = proj.pos.y + proj.params.rotation.sin() * self.projectile_speed * get_frame_time();
+                if (proj.pos.x - bg_map.pos.x - screen_half_size_x) > bg_map.background_img.width() 
+                || (proj.pos.y - bg_map.pos.y - screen_half_size_y) > bg_map.background_img.height() 
+                || (proj.pos.x - bg_map.pos.x) < 0.0
+                || (proj.pos.y - bg_map.pos.y) < 0.0 {
+                    info!("removed projectile");
+                    false //remove this
+                } else {
+                    true //retain this
+            }
+        });
     }
 
     pub fn draw_gun(&mut self, bg_map: &BackgroundMap, point_to_pos: Point, mouse_left_pressed: bool) {
@@ -67,7 +86,7 @@ impl Gun {
                 y: 0.5
             },
             rotation: theta,
-            color: PURPLE
+            color: DARKBROWN
         };
 
         if mouse_left_pressed && (self.time_count > 1.0/self.rate_of_fire)  {
@@ -96,30 +115,16 @@ impl Gun {
             params);
     }
 
-    pub fn draw_projectiles(&mut self, bg_map: &BackgroundMap, player: &Player) {
+    pub fn draw_projectiles(&mut self, bg_map: &BackgroundMap) {
 
-        self.projectile.retain_mut(| proj | {
-            let screen_half_size_x = WINDOW_WIDTH/2.0;
-            let screen_half_size_y = WINDOW_HEIGHT/2.0;
-                proj.pos.x = proj.pos.x + proj.params.rotation.cos() * self.projectile_speed * get_frame_time();
-                proj.pos.y = proj.pos.y + proj.params.rotation.sin() * self.projectile_speed * get_frame_time();
-                if (proj.pos.x - bg_map.pos.x - screen_half_size_x) > bg_map.background_img.width() 
-                || (proj.pos.y - bg_map.pos.y - screen_half_size_y) > bg_map.background_img.height() 
-                || (proj.pos.x - bg_map.pos.x) < 0.0
-                || (proj.pos.y - bg_map.pos.y) < 0.0 {
-                    info!("removed projectile");
-                    false //remove this
-                } else {
-                    draw_rectangle_ex(
-                        proj.pos.x + bg_map.pos.x,
-                        proj.pos.y + bg_map.pos.y,
-                        proj.size.x,
-                        proj.size.y,
-                        proj.params.clone());
-                    true //retain this
-            }
-        });
-        
+        for proj in self.projectile.iter() {
+            draw_rectangle_ex(
+                proj.pos.x + bg_map.pos.x,
+                proj.pos.y + bg_map.pos.y,
+                proj.size.x,
+                proj.size.y,
+                proj.params.clone());
+        }
     }
 }
 

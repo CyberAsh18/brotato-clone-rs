@@ -6,6 +6,7 @@ mod background_map;
 mod player;
 mod enemy;
 mod equipment;
+mod collision;
 
 use background_map::BackgroundMap;
 use equipment::Gun;
@@ -57,8 +58,13 @@ async fn main() {
         Point {
             x: 0.0,
             y: 0.0,
-        }, 
+        },
+        Point {
+            x: 16.0,
+            y: 16.0,
+        },
         160.0, 
+        100.0,
         RED,
     );
     let mut enemy2 = enemy::Enemy::initialize(
@@ -66,7 +72,12 @@ async fn main() {
             x: WINDOW_WIDTH / 2.0,
             y: 0.0,
         }, 
+        Point {
+            x: 20.0,
+            y: 20.0,
+        },
         170.0, 
+        100.0,
         PINK,
     );
 
@@ -82,15 +93,15 @@ async fn main() {
 
         //updates the players and the backgrounds pos
         player.update_pos(&mut bg_map);
-        player_gun.update_pos(player.pos.clone());
-        enemy1.chase(&player, &bg_map);
-        enemy2.chase(&player, &bg_map);
+        player_gun.update_pos(&bg_map, &player);
+        enemy1.chase(&player, &bg_map, &mut player_gun.projectile);
+        enemy2.chase(&player, &bg_map, &mut player_gun.projectile);
 
         // draw
         bg_map.draw();
         player.draw_temp();
         player_gun.draw_gun(&bg_map, cursor_pos, mouse_left_pressed);
-        player_gun.draw_projectiles(&bg_map, &player);
+        player_gun.draw_projectiles(&bg_map);
         enemy1.draw(&bg_map);
         enemy2.draw(&bg_map);
 
