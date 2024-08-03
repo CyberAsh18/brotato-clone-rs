@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::{custom::{self, Point}, player::{self, Player}};
+use crate::custom;
 
 pub struct BackgroundMap {
     pub background_img: Texture2D,

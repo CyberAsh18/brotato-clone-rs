@@ -8,6 +8,7 @@ use crate::{background_map::BackgroundMap, collision::Collision, custom::Point, 
 // move towards the player
 // try attaking the player if the enemy has a weapon
 // if enemy collides with player, reduce player's hp
+// if enemy collides with projectile, recude enemy's hp
 
 pub struct Enemy{
     pub pos: Point,

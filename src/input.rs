@@ -1,4 +1,3 @@
-use macroquad::logging::info;
 use macroquad::input::{is_key_pressed, is_key_released, mouse_position, KeyCode};
 use macroquad::time::get_frame_time;
 use crate::custom::{Direction, Point};

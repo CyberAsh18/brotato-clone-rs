@@ -1,6 +1,4 @@
 mod input;
-mod process;
-mod output;
 mod custom;
 mod background_map;
 mod player;
@@ -53,6 +51,7 @@ async fn main() {
         500.0,
         3.0,
         0.0);
+        
     //enemy
     let mut enemy1 = enemy::Enemy::initialize(
         Point {

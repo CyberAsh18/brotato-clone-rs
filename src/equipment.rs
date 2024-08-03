@@ -1,6 +1,6 @@
-use std::{f32::consts::PI, sync::Arc};
+use std::f32::consts::PI;
 
-use macroquad::{audio::PlaySoundParams, prelude::*};
+use macroquad::prelude::*;
 use crate::{custom::Point, player::Player, BackgroundMap, WINDOW_HEIGHT, WINDOW_WIDTH};
 
 pub struct Projectile {
