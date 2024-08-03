@@ -7,6 +7,7 @@ mod equipment;
 mod collision;
 
 use background_map::BackgroundMap;
+use enemy::Enemy;
 use equipment::Gun;
 use player::Player;
 
@@ -18,8 +19,8 @@ use macroquad::prelude::*;
 
 
 const FPS: f32 = 60.0;
-const WINDOW_WIDTH: f32 = 640.0;
-const WINDOW_HEIGHT: f32 = 480.0;
+const WINDOW_WIDTH: f32 = 800.0;
+const WINDOW_HEIGHT: f32 = 600.0;
 
 fn conf() -> Conf {
     Conf{
@@ -53,6 +54,8 @@ async fn main() {
         0.0);
         
     //enemy
+    let enemies: Vec<Enemy> = vec![]; 
+
     let mut enemy1 = enemy::Enemy::initialize(
         Point {
             x: 0.0,
@@ -80,7 +83,6 @@ async fn main() {
         PINK,
     );
 
-
     loop {
         let now = SystemTime::now();
         clear_background(BLACK);
@@ -93,8 +95,10 @@ async fn main() {
         //update
         player.update_pos(&mut bg_map, &player_vel);
         player_gun.update_pos(&bg_map, &player);
-        enemy1.chase(&player, &bg_map, &mut player_gun.projectile);
-        enemy2.chase(&player, &bg_map, &mut player_gun.projectile);
+        enemy1.chase(&player, &bg_map);
+        enemy1.detect_collision(&mut player_gun.projectile);
+        enemy2.chase(&player, &bg_map);
+        enemy2.detect_collision(&mut player_gun.projectile);
 
         // draw
         bg_map.draw();
