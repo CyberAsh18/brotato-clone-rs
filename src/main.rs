@@ -58,7 +58,9 @@ async fn main() {
         player.size.clone(),
         300.0,
         3.0,
-        0.0);
+        0.0,
+        "assets\\topdown_shooter_assets\\sGun.png",
+        "assets\\topdown_shooter_assets\\sBullet.png").await;
         
     //enemy
     let enemies: Vec<Enemy> = vec![]; 
@@ -75,6 +77,7 @@ async fn main() {
         50.0, 
         100.0,
         RED,
+        "assets\\topdown_shooter_assets\\sEnemy_strip7.png"
     );
     let mut enemy2 = enemy::Enemy::initialize(
         Point {
@@ -88,6 +91,7 @@ async fn main() {
         30.0, 
         100.0,
         PINK,
+        "assets\\topdown_shooter_assets\\sEnemy_strip7.png"
     );
 
     loop {

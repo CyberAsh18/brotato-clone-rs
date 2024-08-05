@@ -12,19 +12,26 @@ pub struct Projectile {
 pub struct Gun {
     size: Point,
     pos: Point,
+    pub texture: Option<Texture2D>,
     projectile_speed: f32,
+    pub projectile: Vec<Projectile>,
+    pub projectile_texture: Option<Texture2D>,
     rate_of_fire: f32,
     time_count: f32,
-    pub projectile: Vec<Projectile>,
 }
 
 impl Gun {
-    pub fn initialize(
+    pub async fn initialize(
         size:Point, 
         projectile_speed: f32,
         rate_of_fire: f32,
-        time_count: f32) -> Gun {
-        return Gun {
+        time_count: f32,
+        path: &str,
+        path_projectile_texture: &str) -> Gun {
+        let texture = load_texture(path).await;
+        let projectile_texture = load_texture(path_projectile_texture).await;
+
+        let mut gun = Gun {
             size,
             pos: Point {
                 x: 0.0,
@@ -34,7 +41,21 @@ impl Gun {
             rate_of_fire,
             time_count,
             projectile: vec![],
+            texture: None,
+            projectile_texture: None,
         };
+
+        match projectile_texture {
+            Ok(a) => {
+                gun.projectile_texture = Some(a);
+            },
+            Err(_) => { },
+        }
+
+        match texture {
+            Ok(a) => { gun.texture = Some(a); gun },
+            Err(_) => { gun },
+        }
     }
 
     pub fn update_pos(&mut self, bg_map: &BackgroundMap, player: &Player ) {
@@ -62,9 +83,17 @@ impl Gun {
 
     pub fn draw_gun(&mut self, bg_map: &BackgroundMap, point_to_pos: Point, mouse_left_pressed: bool) {
         //draw gun
-        let gun_width = self.size.x * 1.2;
-        let gun_height = self.size.y / 4.0;
+        let mut gun_width = self.size.x * 1.2;
+        let mut gun_height = self.size.y / 4.0;
 
+        match &self.texture {
+            Some(a) => {
+                gun_width = a.width();
+                gun_height = a.height();
+            },
+            None => {},
+        }
+        
         let mut x: f32 = self.pos.x + (self.size.x / 2.0);
         let mut y = self.pos.y + (self.size.y / 2.0) - gun_height/2.0 ;
 
@@ -106,24 +135,65 @@ impl Gun {
         }
 
         self.time_count += get_frame_time();
-
-        draw_rectangle_ex(
-            x,
-            y,
-            gun_width,
-            gun_height,
-            params);
+        
+        match &self.texture {
+            Some(a) => {
+                draw_texture_ex(
+                    &a,
+                    x,
+                    y,
+                    WHITE, 
+                    DrawTextureParams {
+                        dest_size: Some(
+                            vec2(
+                            a.width(),
+                            a.height())
+                        ),
+                        source: None,
+                        rotation: theta,
+                        flip_x: false,
+                        flip_y: false,
+                        pivot: Some(Vec2 { x: x , y: y }),
+                    },
+                );
+            },
+            None => {
+                draw_rectangle_ex(
+                    x,
+                    y,
+                    gun_width,
+                    gun_height,
+                    params);
+            },
+        }
+        
     }
 
     pub fn draw_projectiles(&mut self, bg_map: &BackgroundMap) {
 
         for proj in self.projectile.iter() {
-            draw_rectangle_ex(
-                proj.pos.x + bg_map.pos.x,
-                proj.pos.y + bg_map.pos.y,
-                proj.size.x,
-                proj.size.y,
-                proj.params.clone());
+            match &self.projectile_texture {
+                Some(a) => {
+                    draw_texture_ex(
+                        &a,
+                        proj.pos.x + bg_map.pos.x,
+                        proj.pos.y + bg_map.pos.y,
+                        WHITE,
+                        DrawTextureParams {
+                            ..Default::default()
+                        }
+                    );
+                },
+                None => {
+                    draw_rectangle_ex(
+                        proj.pos.x + bg_map.pos.x,
+                        proj.pos.y + bg_map.pos.y,
+                        proj.size.x,
+                        proj.size.y,
+                        proj.params.clone());
+                },
+            }
+            
         }
     }
 }

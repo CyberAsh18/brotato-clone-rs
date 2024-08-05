@@ -24,6 +24,7 @@ pub struct Enemy{
     speed: f32, //pixel per frame
     hp: f32,
     color: Color,
+    texture: Option<Texture2D>,
 }
 
 
@@ -55,13 +56,14 @@ impl EnemySet {
 }
 
 impl Enemy {
-    pub fn initialize(pos: Point, size: Point, speed: f32, hp: f32, color: Color) -> Enemy {
+    pub fn initialize(pos: Point, size: Point, speed: f32, hp: f32, color: Color, path: &str) -> Enemy {
         return Enemy {
             pos,
             size,
             speed,
             hp,
             color,
+            texture: None,
         }
     }
 
