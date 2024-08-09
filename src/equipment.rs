@@ -83,19 +83,19 @@ impl Gun {
 
     pub fn draw_gun(&mut self, bg_map: &BackgroundMap, point_to_pos: Point, mouse_left_pressed: bool) {
         //draw gun
-        let mut gun_width = self.size.x * 1.2;
-        let mut gun_height = self.size.y / 4.0;
+        self.size.x = self.size.x * 1.2;
+        self.size.y = self.size.y / 4.0;
 
         match &self.texture {
             Some(a) => {
-                gun_width = a.width();
-                gun_height = a.height();
+                self.size.x = a.width();
+                self.size.y = a.height();
             },
             None => {},
         }
         
         let mut x: f32 = self.pos.x + (self.size.x / 2.0);
-        let mut y = self.pos.y + (self.size.y / 2.0) - gun_height/2.0 ;
+        let mut y = self.pos.y + self.size.y / 2.0;
 
         let dis = f32::sqrt(f32::powf(point_to_pos.x - x, 2.0) + f32::powf(point_to_pos.y - y, 2.0));
         let mut theta = ((point_to_pos.y - y) / dis).acos();
@@ -107,7 +107,7 @@ impl Gun {
         }
 
         x = x + theta.cos();
-        y = y + theta.sin() + gun_height/2.0;
+        y = y + theta.sin() + self.size.y/2.0;
 
         let params = DrawRectangleParams {
             offset: Vec2 {
@@ -121,12 +121,12 @@ impl Gun {
         if mouse_left_pressed && (self.time_count > 1.0/self.rate_of_fire)  {
             self.projectile.push(Projectile {
                 pos: Point {
-                    x: x - bg_map.pos.x,
-                    y: y - bg_map.pos.y,
+                    x: x - bg_map.pos.x + self.size.x * theta.cos(),
+                    y: y - bg_map.pos.y + self.size.y * theta.sin(),
                 },
                 size: Point {
-                    x: gun_height,
-                    y: gun_height,
+                    x: 0.0,
+                    y: 0.0,
                 },
                 params : params.clone(),
             });
@@ -141,7 +141,7 @@ impl Gun {
                 draw_texture_ex(
                     &a,
                     x,
-                    y,
+                    y - a.height()/2.0,
                     WHITE, 
                     DrawTextureParams {
                         dest_size: Some(
@@ -153,7 +153,7 @@ impl Gun {
                         rotation: theta,
                         flip_x: false,
                         flip_y: false,
-                        pivot: Some(Vec2 { x: x , y: y }),
+                        pivot: Some(Vec2{x: x, y:y}),
                     },
                 );
             },
@@ -161,8 +161,8 @@ impl Gun {
                 draw_rectangle_ex(
                     x,
                     y,
-                    gun_width,
-                    gun_height,
+                    self.size.x,
+                    self.size.y,
                     params);
             },
         }
@@ -176,8 +176,8 @@ impl Gun {
                 Some(a) => {
                     draw_texture_ex(
                         &a,
-                        proj.pos.x + bg_map.pos.x,
-                        proj.pos.y + bg_map.pos.y,
+                        proj.pos.x + bg_map.pos.x - a.width() / 2.0,
+                        proj.pos.y + bg_map.pos.y - a.height() / 2.0,
                         WHITE,
                         DrawTextureParams {
                             ..Default::default()
