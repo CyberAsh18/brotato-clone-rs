@@ -113,7 +113,7 @@ impl Enemy {
     }
 
     //todo draw simple rects when the texture is unavailable
-    pub fn draw(&mut self, bg_map: &BackgroundMap) {
+    pub fn draw(&mut self, bg_map: &BackgroundMap, pause: bool) {
         if self.texture.len() > 0 {
             match &mut self.sprite_sheet {
                 Some(a1) => {
@@ -132,7 +132,9 @@ impl Enemy {
                             flip_y: false,
                             pivot: None,
                         });
-                    a1.update();
+                        if !pause {
+                            a1.update();
+                        }
                 },
                 None => {
                     draw_rectangle(

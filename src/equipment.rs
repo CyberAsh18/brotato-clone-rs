@@ -81,7 +81,7 @@ impl Gun {
         });
     }
 
-    pub fn draw_gun(&mut self, bg_map: &BackgroundMap, point_to_pos: Point, mouse_left_pressed: bool) {
+    pub fn draw_gun(&mut self, bg_map: &BackgroundMap, point_to_pos: &Point, mouse_left_pressed: bool, pause: bool) {
         //draw gun
         self.size.x = self.size.x * 1.2;
         self.size.y = self.size.y / 4.0;
@@ -118,7 +118,7 @@ impl Gun {
             color: DARKBROWN
         };
 
-        if mouse_left_pressed && (self.time_count > 1.0/self.rate_of_fire)  {
+        if mouse_left_pressed && (self.time_count > 1.0/self.rate_of_fire) && !pause  {
             self.projectile.push(Projectile {
                 pos: Point {
                     x: x - bg_map.pos.x + self.size.x * theta.cos(),

@@ -147,7 +147,7 @@ impl Player {
     }
 
     //todo draw simple rects when the texture is unavailable
-    pub fn draw(&mut self, player_vel: &Point) {
+    pub fn draw(&mut self, player_vel: &Point, pause: bool) {
         if self.texture.len() > 0 {
             let anim_index;
             if player_vel.x == 0.0 && player_vel.y == 0.0 {
@@ -171,7 +171,9 @@ impl Player {
                             flip_y: false,
                             pivot: None,
                         });
-                    a1.update();
+                    if !pause {
+                        a1.update();
+                    }
                 },
                 None => {
                     draw_rectangle(self.pos.x, self.pos.y, WIDTH, HEIGHT, ORANGE);

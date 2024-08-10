@@ -7,9 +7,12 @@ mod enemies;
 mod equipment;
 mod collision;
 mod animation;
+mod user_interface;
 mod global_constants;
 
 use background_map::BackgroundMap;
+use custom::Direction;
+use custom::Point;
 use enemies::Generator;
 use equipment::Gun;
 use player::Player;
@@ -61,36 +64,43 @@ async fn main() {
         "assets\\topdown_shooter_assets\\sGun.png",
         "assets\\topdown_shooter_assets\\sBullet.png").await;
     
+        let mut ui = input::UI::initialize(false);
+
     let mut gen = Generator::initialize(4).await;
-    
     gen.run();
 
+    let mut cursor_pos = Point {x: 0.0, y: 0.0};
+    let mut player_vel = Point {x: 0.0, y: 0.0};
     loop {
         let now = SystemTime::now();
         clear_background(BLACK);
 
         //input
-        let cursor_pos = input::get_cursor_pos();
         let mouse_left_pressed = is_mouse_button_down(macroquad::input::MouseButton::Left);
-        let player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
+        ui.register_keyboard_press();
 
-        //update
-        player.update_pos(&mut bg_map, &player_vel);
-        player_gun.update_pos(&bg_map, &player);
-        
-        for enemy in gen.current_enemies.iter_mut() {
-            enemy.chase(&player, &bg_map);
-            enemy.detect_collision(&mut player_gun.projectile);
+        if !ui.pause {
+            cursor_pos = input::get_cursor_pos();
+            player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
+
+            //update
+            player.update_pos(&mut bg_map, &player_vel);
+            player_gun.update_pos(&bg_map, &player);
+            
+            for enemy in gen.current_enemies.iter_mut() {
+                enemy.chase(&player, &bg_map);
+                enemy.detect_collision(&mut player_gun.projectile);
+            }
         }
-
+        
         // draw
         bg_map.draw();
-        player.draw(&player_vel);
-        player_gun.draw_gun(&bg_map, cursor_pos, mouse_left_pressed);
+        player.draw(&player_vel, ui.pause);
+        player_gun.draw_gun(&bg_map, &cursor_pos, mouse_left_pressed, ui.pause);
         player_gun.draw_projectiles(&bg_map);
 
         for enemy in gen.current_enemies.iter_mut() {
-            enemy.draw(&bg_map);
+            enemy.draw(&bg_map, ui.pause);
         }
 
         fps_control(now);
