@@ -14,6 +14,7 @@ use background_map::BackgroundMap;
 use custom::Point;
 use enemies::Generator;
 use equipment::Gun;
+use macroquad::ui::root_ui;
 use player::Player;
 use global_constants::WINDOW_WIDTH;
 use global_constants::WINDOW_HEIGHT;
@@ -65,44 +66,52 @@ async fn main() {
     
         let mut ui = input::UI::initialize(false);
 
-    let mut gen = Generator::initialize(4).await;
-    gen.run();
+    let mut enemies_generator = enemies::Generator::initialize(4).await;
+    enemies_generator.run();
 
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
+    let mut main_menu = true;
     loop {
         let now = SystemTime::now();
         clear_background(BLACK);
 
-        //input
-        let mouse_left_pressed = is_mouse_button_down(macroquad::input::MouseButton::Left);
-        ui.register_keyboard_press();
+        if main_menu {
 
-        if !ui.pause {
-            cursor_pos = input::get_cursor_pos();
-            player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
 
-            //update
-            player.update_pos(&mut bg_map, &player_vel);
-            player_gun.update_pos(&bg_map, &player);
-            
-            for enemy in gen.current_enemies.iter_mut() {
-                enemy.chase(&player, &bg_map);
-                enemy.detect_collision(&mut player_gun.projectile);
+
+        } else {
+
+            //input
+            let mouse_left_pressed = is_mouse_button_down(macroquad::input::MouseButton::Left);
+            ui.register_keyboard_press();
+
+            if !ui.pause {
+                cursor_pos = input::get_cursor_pos();
+                player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
+
+                //update
+                player.update_pos(&mut bg_map, &player_vel);
+                player_gun.update_pos(&bg_map, &player);
+                
+                for enemy in enemies_generator.current_enemies.iter_mut() {
+                    enemy.chase(&player, &bg_map);
+                    enemy.detect_collision(&mut player_gun.projectile);
+                }
             }
-        }
-        
-        // draw
-        bg_map.draw();
-        player.draw(&player_vel, ui.pause);
-        player_gun.draw_gun(&bg_map, &cursor_pos, mouse_left_pressed, ui.pause);
-        player_gun.draw_projectiles(&bg_map);
-        for enemy in gen.current_enemies.iter_mut() {
-            enemy.draw(&bg_map, ui.pause);
-        }
+            
+            // draw
+            bg_map.draw();
+            player.draw(&player_vel, ui.pause);
+            player_gun.draw_gun(&bg_map, &cursor_pos, mouse_left_pressed, ui.pause);
+            player_gun.draw_projectiles(&bg_map);
+            for enemy in enemies_generator.current_enemies.iter_mut() {
+                enemy.draw(&bg_map, ui.pause);
+            }
 
-        if ui.pause {
-           user_interface::draw_pause_menu();
+            if ui.pause {
+            user_interface::draw_pause_menu();
+            }
         }
 
         fps_control(now);
