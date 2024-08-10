@@ -77,8 +77,8 @@ async fn main() {
         50.0, 
         100.0,
         RED,
-        "assets\\topdown_shooter_assets\\sEnemy_strip7.png"
-    );
+        Some(&["assets\\topdown_shooter_assets\\sEnemy_strip7.png"])
+    ).await;
     let mut enemy2 = enemy::Enemy::initialize(
         Point {
             x: WINDOW_WIDTH / 2.0,
@@ -91,8 +91,8 @@ async fn main() {
         30.0, 
         100.0,
         PINK,
-        "assets\\topdown_shooter_assets\\sEnemy_strip7.png"
-    );
+        Some(&["assets\\topdown_shooter_assets\\sEnemy_strip7.png"])
+    ).await;
 
     loop {
         let now = SystemTime::now();
