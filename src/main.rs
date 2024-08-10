@@ -3,25 +3,24 @@ mod custom;
 mod background_map;
 mod player;
 mod enemy;
+mod enemies;
 mod equipment;
 mod collision;
 mod animation;
+mod global_constants;
 
 use background_map::BackgroundMap;
-use enemy::Enemy;
+use enemies::Generator;
 use equipment::Gun;
 use player::Player;
+use global_constants::WINDOW_WIDTH;
+use global_constants::WINDOW_HEIGHT;
+use global_constants::FPS;
 
 use core::time;
 use std::{thread::sleep, time::SystemTime};
-
-use custom::Point;
 use macroquad::prelude::*;
 
-
-const FPS: f32 = 60.0;
-const WINDOW_WIDTH: f32 = 800.0;
-const WINDOW_HEIGHT: f32 = 600.0;
 
 fn conf() -> Conf {
     Conf{
@@ -61,38 +60,10 @@ async fn main() {
         0.0,
         "assets\\topdown_shooter_assets\\sGun.png",
         "assets\\topdown_shooter_assets\\sBullet.png").await;
-        
-    //enemy
-    let enemies: Vec<Enemy> = vec![]; 
-
-    let mut enemy1 = enemy::Enemy::initialize(
-        Point {
-            x: 0.0,
-            y: 0.0,
-        },
-        Point {
-            x: 16.0,
-            y: 16.0,
-        },
-        50.0, 
-        100.0,
-        RED,
-        Some(&["assets\\topdown_shooter_assets\\sEnemy_strip7.png"])
-    ).await;
-    let mut enemy2 = enemy::Enemy::initialize(
-        Point {
-            x: WINDOW_WIDTH / 2.0,
-            y: 0.0,
-        }, 
-        Point {
-            x: 20.0,
-            y: 20.0,
-        },
-        30.0, 
-        100.0,
-        PINK,
-        Some(&["assets\\topdown_shooter_assets\\sEnemy_strip7.png"])
-    ).await;
+    
+    let mut gen = Generator::initialize(4).await;
+    
+    gen.run();
 
     loop {
         let now = SystemTime::now();
@@ -106,18 +77,21 @@ async fn main() {
         //update
         player.update_pos(&mut bg_map, &player_vel);
         player_gun.update_pos(&bg_map, &player);
-        enemy1.chase(&player, &bg_map);
-        enemy1.detect_collision(&mut player_gun.projectile);
-        enemy2.chase(&player, &bg_map);
-        enemy2.detect_collision(&mut player_gun.projectile);
+        
+        for enemy in gen.current_enemies.iter_mut() {
+            enemy.chase(&player, &bg_map);
+            enemy.detect_collision(&mut player_gun.projectile);
+        }
 
         // draw
         bg_map.draw();
         player.draw(&player_vel);
         player_gun.draw_gun(&bg_map, cursor_pos, mouse_left_pressed);
         player_gun.draw_projectiles(&bg_map);
-        enemy1.draw(&bg_map);
-        enemy2.draw(&bg_map);
+
+        for enemy in gen.current_enemies.iter_mut() {
+            enemy.draw(&bg_map);
+        }
 
         fps_control(now);
         next_frame().await

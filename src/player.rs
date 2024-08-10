@@ -146,6 +146,7 @@ impl Player {
         }
     }
 
+    //todo draw simple rects when the texture is unavailable
     pub fn draw(&mut self, player_vel: &Point) {
         if self.texture.len() > 0 {
             let anim_index;

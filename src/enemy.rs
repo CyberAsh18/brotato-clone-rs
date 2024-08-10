@@ -11,51 +11,16 @@ use crate::{background_map::BackgroundMap, collision::Collision, custom::Point, 
 // if enemy collides with player, reduce player's hp
 // if enemy collides with projectile, reduce enemy's hp
 
-
-enum EnemyType {
-    Small,  // small and fast
-    Medium, // default
-    Big,    // big and slow
-}
-
-
+#[derive(Clone)]
 pub struct Enemy{
     pub pos: Point,
-    size: Point,
-    speed: f32, //pixel per frame
+    pub size: Point,
+    pub speed: f32, //pixel per frame
     hp: f32,
     color: Color,
     hitbox_padding: f32,
     sprite_sheet: Option<AnimatedSprite>,
     pub texture: Vec<Texture2D>,
-}
-
-
-pub struct EnemySet {
-    enemies: Vec<Enemy>,
-    enemy_type: EnemyType,
-}
-
-pub struct EnemyWave {
-    enemy_count: i32,
-    wave_count: i32,
-}
-
-
-impl EnemySet {
-    pub fn spawn_enemies(enemyType: EnemyType) {
-        match enemyType {
-            EnemyType::Small => {
-                
-            },
-            EnemyType::Medium => {
-                
-            },
-            EnemyType::Big => {
-                
-            },
-        }
-    }
 }
 
 impl Enemy {
@@ -129,6 +94,7 @@ impl Enemy {
             }.intersect()
         });
     }
+
     //simple chase algorithm (follows the player)
     pub fn chase(&mut self, player: &Player, bg_map: &BackgroundMap, ) {
         
@@ -146,6 +112,7 @@ impl Enemy {
         };
     }
 
+    //todo draw simple rects when the texture is unavailable
     pub fn draw(&mut self, bg_map: &BackgroundMap) {
         if self.texture.len() > 0 {
             match &mut self.sprite_sheet {
