@@ -73,7 +73,7 @@ impl Gun {
                 || (proj.pos.y - bg_map.pos.y - screen_half_size_y) > bg_map.background_img.height() 
                 || (proj.pos.x - bg_map.pos.x) < 0.0
                 || (proj.pos.y - bg_map.pos.y) < 0.0 {
-                    info!("removed projectile");
+                    //info!("removed projectile");
                     false //remove this
                 } else {
                     true //retain this
@@ -131,7 +131,7 @@ impl Gun {
                 params : params.clone(),
             });
             self.time_count = 0.0;
-            info!("mouse clicked, timecount: {}", self.time_count);
+            //info!("mouse clicked, timecount: {}", self.time_count);
         }
 
         self.time_count += get_frame_time();

@@ -32,7 +32,8 @@ impl UI {
 
 pub struct Movement{
     pub speed: f32, // pixel per frame
-    pub dir: Direction
+    pub dir: Direction,
+    pub reset_dir: Direction
 }
 
 impl Movement {
@@ -43,30 +44,57 @@ impl Movement {
         //left
         if is_key_pressed(KeyCode::A) {
             self.dir.point.x += -1.0;
-        } else if is_key_released(KeyCode::A) && self.dir.point.x < 0.0 {
+            if self.dir.point.x < -1.0 {
+                self.dir.point.x = -1.0;
+            }
+        } else if is_key_released(KeyCode::A) {
             self.dir.point.x += 1.0;
+            if self.dir.point.x > 1.0 {
+                self.dir.point.x = 1.0;
+            }
         }
 
         //right
         if is_key_pressed(KeyCode::D) {
             self.dir.point.x += 1.0;
-        } else if is_key_released(KeyCode::D) && self.dir.point.x > 0.0 {
+            if self.dir.point.x > 1.0 {
+                self.dir.point.x = 1.0;
+            }
+        } else if is_key_released(KeyCode::D) {
             self.dir.point.x += -1.0;
+            if self.dir.point.x < -1.0 {
+                self.dir.point.x = -1.0;
+            }
         }
 
         //up
         if is_key_pressed(KeyCode::W) {
             self.dir.point.y += -1.0;
-        } else if is_key_released(KeyCode::W) && self.dir.point.y < 0.0 {
+            if self.dir.point.y < -1.0 {
+                self.dir.point.y = -1.0;
+            }
+        } else if is_key_released(KeyCode::W) {
             self.dir.point.y += 1.0;
+            if self.dir.point.y > 1.0 {
+                self.dir.point.y = 1.0;
+            }
         }
 
         //down
         if is_key_pressed(KeyCode::S) {
             self.dir.point.y += 1.0;
-        } else if is_key_released(KeyCode::S) && self.dir.point.y > 0.0 {
+            if self.dir.point.y > 1.0 {
+                self.dir.point.y = 1.0;
+            }
+        } else if is_key_released(KeyCode::S) {
             self.dir.point.y += -1.0;
+            if self.dir.point.y < -1.0 {
+                self.dir.point.y = -1.0;
+            }
         }
+
+
+
         return self.dir.point.clone() * self.speed * get_frame_time();
     }   
 }

@@ -11,7 +11,6 @@ mod user_interface;
 mod global_constants;
 
 use background_map::BackgroundMap;
-use custom::Direction;
 use custom::Point;
 use enemies::Generator;
 use equipment::Gun;
@@ -98,9 +97,12 @@ async fn main() {
         player.draw(&player_vel, ui.pause);
         player_gun.draw_gun(&bg_map, &cursor_pos, mouse_left_pressed, ui.pause);
         player_gun.draw_projectiles(&bg_map);
-
         for enemy in gen.current_enemies.iter_mut() {
             enemy.draw(&bg_map, ui.pause);
+        }
+
+        if ui.pause {
+           user_interface::draw_pause_menu();
         }
 
         fps_control(now);
