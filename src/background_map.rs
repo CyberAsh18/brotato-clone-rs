@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::custom;
+use crate::{custom, global_constants::{WINDOW_HEIGHT, WINDOW_WIDTH}};
 
 pub struct BackgroundMap {
     pub background_img: Texture2D,
@@ -15,11 +15,14 @@ impl BackgroundMap {
         } else {
             info!("map loaded!");
             let img = texture.unwrap();
+            let width = img.width();
+            let height = img.height();
+            info!("widdth {}", width);
             Option::from(BackgroundMap {
                 background_img: img,
                 pos: custom::Point {
-                    x: 0.0,
-                    y: 0.0,
+                    x: -1.0 * width / 2.0 + WINDOW_WIDTH / 2.0,
+                    y: -1.0 * height / 2.0 + WINDOW_HEIGHT / 2.0,
                 }})
         }
     }

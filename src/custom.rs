@@ -40,4 +40,3 @@ impl Add for Point {
 pub struct Direction {
     pub point: Point
 }
-

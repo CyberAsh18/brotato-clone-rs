@@ -19,7 +19,7 @@ pub struct Enemy{
     hp: f32,
     color: Color,
     hitbox_padding: f32,
-    sprite_sheet: Option<AnimatedSprite>,
+    pub sprite_sheet: Option<AnimatedSprite>,
     pub texture: Vec<Texture2D>,
 }
 
@@ -39,7 +39,6 @@ impl Enemy {
 
         match texture_paths {
             Some(texture_path_some) => {
-                let mut animations: Vec<Animation> = vec![];
                 for texture_path in texture_path_some.iter() { 
                     let run_png = "assets\\topdown_shooter_assets\\sEnemy_strip7.png";
                     let frames: u32 = 7; //hardcoded, this is obtained from deciphering the sprite image
@@ -56,20 +55,12 @@ impl Enemy {
                                 return enemy;
                             },
                         }
-                        animations.push(
-                            Animation {
-                                name: run_png.to_string(),
-                                row: 0,
-                                frames: frames ,  
-                                fps: 12,    //this is estimated and set roughly by observing the frame transitions.
-                            }
-                        );
                     }
                 }
                 enemy.sprite_sheet = Some(AnimatedSprite::new(
                     enemy.size.x as u32,
                     enemy.size.y as u32,
-                    &animations,
+                    &[],
                     true,
                 ));
             },

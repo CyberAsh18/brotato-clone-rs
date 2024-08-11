@@ -1,6 +1,6 @@
-use macroquad::color::PINK;
+use macroquad::{color::PINK, prelude::animation::{AnimatedSprite, Animation}};
 
-use crate::{custom::Point, enemy::Enemy, global_constants::{WINDOW_WIDTH, WINDOW_HEIGHT}};
+use crate::{custom::Point, enemy::Enemy, global_constants::{WINDOW_HEIGHT, WINDOW_WIDTH}};
 use rand::prelude::*;
 
 enum EnemyType {
@@ -41,6 +41,7 @@ impl Generator {
     }
 
     pub fn run(&mut self) {
+        let enemy_type_1 = 0;
         //generate
         for count in 0..self.total_count {
             let mut temp_x = WINDOW_WIDTH - self.enemies[0].size.x;
@@ -48,10 +49,27 @@ impl Generator {
             let border_pad = 25.0;
             temp_x = rand::thread_rng().gen_range((border_pad)..(temp_x - border_pad)) as f32;
             temp_y = rand::thread_rng().gen_range((border_pad)..(temp_y - border_pad)) as f32;
-            self.enemies[0].pos.x = temp_x;
-            self.enemies[0].pos.y = temp_y;
-            self.enemies[0].speed = rand::thread_rng().gen_range(40..60) as f32;
-            self.current_enemies.push(self.enemies[0].clone());
+            self.enemies[enemy_type_1].pos.x = temp_x;
+            self.enemies[enemy_type_1].pos.y = temp_y;
+            self.enemies[enemy_type_1].speed = rand::thread_rng().gen_range(40..60) as f32; //randomize the speed within a range to make it look not too uniform
+
+            let mut animations: Vec<Animation> = vec![];
+            animations.push(
+                Animation {
+                    name: "run".to_string(),
+                    row: 0,
+                    frames: 7,  
+                    fps: rand::thread_rng().gen_range((10)..(14)) as u32,    //this is estimated and set roughly by observing the frame transitions. randomize the animation fps
+                }
+            );
+            self.enemies[enemy_type_1].sprite_sheet = Some(AnimatedSprite::new(
+                self.enemies[enemy_type_1].size.x as u32,
+                self.enemies[enemy_type_1].size.y as u32,
+                &animations,
+                    true,
+            ));
+           
+            self.current_enemies.push(self.enemies[enemy_type_1].clone());
         }
     }
 
