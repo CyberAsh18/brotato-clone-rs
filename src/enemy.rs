@@ -15,8 +15,9 @@ use crate::{background_map::BackgroundMap, collision::Collision, custom::Point, 
 pub struct Enemy{
     pub pos: Point,
     pub size: Point,
-    pub speed: f32, //pixel per frame
-    hp: f32,
+    pub speed: f32,         //pixel per frame
+    pub hp: f32,            
+    pub hp_changed: bool,   //this is used for hit animation, atm its just stop drawing when hit
     color: Color,
     hitbox_padding: f32,
     pub sprite_sheet: Option<AnimatedSprite>,
@@ -31,6 +32,7 @@ impl Enemy {
             size,
             speed,
             hp,
+            hp_changed: false,
             color,
             hitbox_padding: 5.0,
             sprite_sheet: None,
@@ -71,9 +73,9 @@ impl Enemy {
 
     }
 
-    pub fn detect_collision(&self, projectiles: &mut Vec<Projectile>) {
-        projectiles.retain_mut(| proj | {
-            !Collision {
+    pub fn detect_collision(&mut self, projectiles: &mut Vec<Projectile>) {
+        projectiles.retain(| proj | {
+            if (Collision {
                 obj1: Aabb {
                     mins: Point2::new(self.pos.x + self.hitbox_padding, self.pos.y + self.hitbox_padding),
                     maxs: Point2::new(self.pos.x + self.size.x - self.hitbox_padding,self.pos.y + self.size.y - self.hitbox_padding),
@@ -82,7 +84,13 @@ impl Enemy {
                     mins: Point2::new(proj.pos.x,proj.pos.y),
                     maxs: Point2::new(proj.pos.x + proj.size.x,proj.pos.y + proj.size.y),
                 }
-            }.intersect()
+            }.intersect()) {
+                self.hp = self.hp - proj.damage;
+                self.hp_changed = true;
+                return false;
+            } else {
+                return true;
+            }
         });
     }
 
@@ -110,22 +118,27 @@ impl Enemy {
                 Some(a1) => {
                     let anim_index = 0; 
                     a1.set_animation(anim_index);
-                    draw_texture_ex(
-                        &self.texture[anim_index], 
-                        self.pos.x + bg_map.pos.x, 
-                        self.pos.y + bg_map.pos.y, 
-                        WHITE, 
-                        DrawTextureParams{
-                            source: Some(a1.frame().source_rect),
-                            dest_size: Some(a1.frame().dest_size),
-                            rotation: 0.0,
-                            flip_x: false,
-                            flip_y: false,
-                            pivot: None,
-                        });
-                        if !pause {
-                            a1.update();
-                        }
+                    if !self.hp_changed {
+                        draw_texture_ex(
+                            &self.texture[anim_index], 
+                            self.pos.x + bg_map.pos.x, 
+                            self.pos.y + bg_map.pos.y, 
+                            WHITE, 
+                            DrawTextureParams{
+                                source: Some(a1.frame().source_rect),
+                                dest_size: Some(a1.frame().dest_size),
+                                rotation: 0.0,
+                                flip_x: false,
+                                flip_y: false,
+                                pivot: None,
+                            });
+                            if !pause {
+                                a1.update();
+                            }
+                    } else {
+                        self.hp_changed = false;
+                    }
+                    
                 },
                 None => {
                     draw_rectangle(

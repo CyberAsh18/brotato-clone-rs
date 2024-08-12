@@ -12,7 +12,6 @@ mod global_constants;
 
 use background_map::BackgroundMap;
 use custom::Point;
-use enemies::Generator;
 use equipment::Gun;
 use macroquad::ui::hash;
 use macroquad::ui::root_ui;
@@ -111,6 +110,7 @@ async fn main() {
 
         } else {
 
+            // ------------------ gameplay ------------------------- //
             if !input_ui.pause {
                 cursor_pos = input::get_cursor_pos();
                 player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
@@ -123,6 +123,8 @@ async fn main() {
                     enemy.chase(&player, &bg_map);
                     enemy.detect_collision(&mut player_gun.projectile);
                 }
+
+                enemies_generator.update();
             }
             
             // draw
