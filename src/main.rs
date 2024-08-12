@@ -66,11 +66,8 @@ async fn main() {
         "assets\\topdown_shooter_assets\\sGun.png",
         "assets\\topdown_shooter_assets\\sBullet.png").await;
     
-        let mut input_ui = input::UI::initialize(false);
-
-    let mut enemies_generator = enemies::Generator::initialize(4).await;
-    enemies_generator.run();
-
+    let mut input_ui = input::UI::initialize(false);
+    let mut enemies_generator = enemies::Generator::initialize().await;
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
     let mut main_menu = true;
@@ -124,7 +121,7 @@ async fn main() {
                     enemy.detect_collision(&mut player_gun.projectile);
                 }
 
-                enemies_generator.update();
+                enemies_generator.update(5.0, 2);
             }
             
             // draw

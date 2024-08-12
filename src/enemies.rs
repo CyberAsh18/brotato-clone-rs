@@ -1,5 +1,5 @@
-use macroquad::{color::PINK, prelude::animation::{AnimatedSprite, Animation}};
-
+use macroquad::{color::PINK, prelude::animation::{AnimatedSprite, Animation}, time::get_frame_time};
+use std::time::Duration;
 use crate::{custom::Point, enemy::Enemy, global_constants::{WINDOW_HEIGHT, WINDOW_WIDTH}};
 use rand::prelude::*;
 
@@ -9,17 +9,16 @@ enum EnemyType {
     Big,    // big and slow
 }
 
-pub struct Generator {
-    total_count: i32,               // total_count =   how many enemies in total to generate,
+pub struct Generator {            // total_count =   how many enemies in total to generate,
     enemies_template: Vec<Enemy>,            //store different types of enemies here and generate clones of it for use.
-    pub current_enemies: Vec<Enemy>
+    pub current_enemies: Vec<Enemy>,
+    counter: f32, //time counter
 }
 
 impl Generator {
     
-    pub async fn initialize(total_count: i32) -> Generator {
+    pub async fn initialize() -> Generator {
         return Generator {
-            total_count,
             enemies_template: vec![
                 //enemy type 1
                 Enemy::initialize(
@@ -37,13 +36,14 @@ impl Generator {
                     Some(&["assets\\topdown_shooter_assets\\sEnemy_strip7.png"])).await
             ],
             current_enemies: vec![],
+            counter: 0.,
         };
     }
 
-    pub fn run(&mut self) {
+    fn generate(&mut self, count: i32) {
         let enemy_type_1 = 0;
         //generate
-        for count in 0..self.total_count {
+        for index in 0..count {
             let mut temp_x = WINDOW_WIDTH - self.enemies_template[0].size.x;
             let mut temp_y = WINDOW_HEIGHT - self.enemies_template[0].size.y;
             let border_pad = 25.0;
@@ -73,10 +73,21 @@ impl Generator {
         }
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, frequency: f32, count: i32) {
+
+        //remove enemy if hp is 0 or below
         self.current_enemies.retain(|enemy| {
             !(enemy.hp <= 0.0)
         });
+
+        //generate enemy every few x seconds
+        self.counter += get_frame_time();
+
+        if self.counter > frequency {
+            self.generate(count);
+            self.counter = 0.;
+        }
+
     }
 
 }
@@ -88,7 +99,10 @@ impl Generator {
 pub fn generator(frequency: i32, count: i32, total_count: i32, startup_time_offset: i32) -> Vec<Enemy> {
 
     //logic 1
+    // frequency: every 5 seconds. count: 2 per 
     
+
+
 
     vec![]
 }

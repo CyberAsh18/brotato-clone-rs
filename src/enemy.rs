@@ -17,7 +17,7 @@ pub struct Enemy{
     pub size: Point,
     pub speed: f32,         //pixel per frame
     pub hp: f32,            
-    pub hp_changed: bool,   //this is used for hit animation, atm its just stop drawing when hit
+    pub hp_changed: bool,   //this is used for hit animation, atm its used to just stop drawing when hit
     color: Color,
     hitbox_padding: f32,
     pub sprite_sheet: Option<AnimatedSprite>,
