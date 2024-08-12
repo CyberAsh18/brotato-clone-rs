@@ -6,6 +6,7 @@ use crate::{custom::Point, player::Player, BackgroundMap, WINDOW_HEIGHT, WINDOW_
 pub struct Projectile {
     pub pos: Point,
     pub size: Point,
+    pub damage: f32,
     params: DrawRectangleParams,
 }
 
@@ -63,7 +64,7 @@ impl Gun {
         self.pos.x = player.pos.x;
         self.pos.y = player.pos.y;
 
-        //update projectile position
+        //update projectile position (remove if it goes out of map bounds)
         self.projectile.retain_mut(| proj | {
             let screen_half_size_x = WINDOW_WIDTH/2.0;
             let screen_half_size_y = WINDOW_HEIGHT/2.0;
@@ -128,6 +129,7 @@ impl Gun {
                     x: 0.0,
                     y: 0.0,
                 },
+                damage: 20.0,
                 params : params.clone(),
             });
             self.time_count = 0.0;

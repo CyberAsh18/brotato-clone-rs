@@ -12,7 +12,6 @@ mod global_constants;
 
 use background_map::BackgroundMap;
 use custom::Point;
-use enemies::Generator;
 use equipment::Gun;
 use macroquad::ui::hash;
 use macroquad::ui::root_ui;
@@ -67,11 +66,8 @@ async fn main() {
         "assets\\topdown_shooter_assets\\sGun.png",
         "assets\\topdown_shooter_assets\\sBullet.png").await;
     
-        let mut input_ui = input::UI::initialize(false);
-
-    let mut enemies_generator = enemies::Generator::initialize(4).await;
-    enemies_generator.run();
-
+    let mut input_ui = input::UI::initialize(false);
+    let mut enemies_generator = enemies::Generator::initialize().await;
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
     let mut main_menu = true;
@@ -111,6 +107,7 @@ async fn main() {
 
         } else {
 
+            // ------------------ gameplay ------------------------- //
             if !input_ui.pause {
                 cursor_pos = input::get_cursor_pos();
                 player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
@@ -123,6 +120,8 @@ async fn main() {
                     enemy.chase(&player, &bg_map);
                     enemy.detect_collision(&mut player_gun.projectile);
                 }
+
+                enemies_generator.update(5.0, 2);
             }
             
             // draw
@@ -133,6 +132,7 @@ async fn main() {
             for enemy in enemies_generator.current_enemies.iter_mut() {
                 enemy.draw(&bg_map, input_ui.pause);
             }
+            user_interface::draw_health_bar();
 
             if input_ui.pause {
                 user_interface::draw_opaque_background();
