@@ -13,23 +13,21 @@ mod global_constants;
 use background_map::BackgroundMap;
 use custom::Point;
 use equipment::Gun;
-use macroquad::ui::hash;
+use global_constants::GAME_TITLE;
 use macroquad::ui::root_ui;
-use macroquad::ui::widgets;
 use player::Player;
 use global_constants::WINDOW_WIDTH;
 use global_constants::WINDOW_HEIGHT;
 use global_constants::FPS;
-use user_interface::get_main_menu_skin;
+use user_interface::get_menu_skin;
 
 use core::time;
 use std::{thread::sleep, time::SystemTime};
 use macroquad::prelude::*;
 
-
 fn conf() -> Conf {
     Conf{
-        window_title: "Ash's Super Duper Game".to_string(),
+        window_title: GAME_TITLE.to_string(),
         window_width: WINDOW_WIDTH as i32,
         window_height: WINDOW_HEIGHT as i32,
         fullscreen: false,
@@ -66,14 +64,17 @@ async fn main() {
         "assets\\topdown_shooter_assets\\sGun.png",
         "assets\\topdown_shooter_assets\\sBullet.png").await;
     
+    let mut main_menu = user_interface::MainMenu::initialize();
+    let mut pause_menu = user_interface::PauseMenu::initialize();
+
     let mut input_ui = input::UI::initialize(false);
     let mut enemies_generator = enemies::Generator::initialize().await;
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
-    let mut main_menu = true;
-
-    let main_menu_ui = get_main_menu_skin().await;
+    let main_menu_ui = get_menu_skin().await;
+    
     root_ui().push_skin(&main_menu_ui);
+    
     loop {
         let now = SystemTime::now();
         clear_background(BLACK);
@@ -82,28 +83,10 @@ async fn main() {
         input_ui.register_keyboard_press();
         let mouse_left_pressed = is_mouse_button_down(macroquad::input::MouseButton::Left);
 
-        if main_menu {
+        if !main_menu.play {
             // draw
             bg_map.draw();
-            user_interface::draw_opaque_background();
-
-            let width = 300.0;
-            let height = 300.0;
-            root_ui().window(hash!(), 
-            vec2(WINDOW_WIDTH / 2.0  - width/2.0, WINDOW_HEIGHT / 2.0 - height / 2.0), 
-            vec2(width, height), |ui| {
-                main_menu = !widgets::Button::new("Play")
-                    .position(vec2(65.0, 15.0))
-                    .ui(ui);
-                widgets::Button::new("Options")
-                    .position(vec2(40.0, 100.0))
-                    .ui(ui);
-        
-                widgets::Button::new("Quit")
-                    .position(vec2(65.0, 195.0))
-                    .ui(ui);
-            });
-
+            main_menu.draw();
 
         } else {
 
@@ -136,6 +119,7 @@ async fn main() {
 
             if input_ui.pause {
                 user_interface::draw_opaque_background();
+                pause_menu.draw();
             }
         }
 

@@ -1,5 +1,5 @@
 use animation::{AnimatedSprite, Animation};
-use macroquad::{prelude::*, texture};
+use macroquad::prelude::*;
 use crate::{custom::{Direction, Point}, input::Movement, BackgroundMap, WINDOW_HEIGHT, WINDOW_WIDTH};
 
 const WIDTH: f32 = 40.0;
