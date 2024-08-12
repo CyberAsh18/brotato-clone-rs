@@ -11,25 +11,6 @@ pub fn get_cursor_pos() -> Point {
     }
 }
 
-pub struct UI {
-    pub pause: bool,
-}
-
-impl UI {
-
-    pub fn initialize(pause: bool) -> UI{
-        return UI {
-            pause
-        }
-    }
-
-    pub fn register_keyboard_press(&mut self) {
-        if is_key_pressed(KeyCode::Escape) {
-            self.pause = !self.pause;
-        }
-    }
-}
-
 pub struct Movement{
     pub speed: f32, // pixel per frame
     pub dir: Direction,

@@ -67,7 +67,6 @@ async fn main() {
     let mut main_menu = user_interface::MainMenu::initialize();
     let mut pause_menu = user_interface::PauseMenu::initialize();
 
-    let mut input_ui = input::UI::initialize(false);
     let mut enemies_generator = enemies::Generator::initialize().await;
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
@@ -80,20 +79,23 @@ async fn main() {
         clear_background(BLACK);
 
         //input
-        input_ui.register_keyboard_press();
         let mouse_left_pressed = is_mouse_button_down(macroquad::input::MouseButton::Left);
 
+        // main menu
         if !main_menu.play {
             // draw
             bg_map.draw();
             main_menu.draw();
 
-        } else {
+            if main_menu.quit { return; }
 
-            // ------------------ gameplay ------------------------- //
-            if !input_ui.pause {
+        } 
+        // game
+        else { 
+            if pause_menu.resume {
                 cursor_pos = input::get_cursor_pos();
                 player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
+                pause_menu.update();
 
                 //update
                 player.update_pos(&mut bg_map, &player_vel);
@@ -101,7 +103,7 @@ async fn main() {
                 
                 for enemy in enemies_generator.current_enemies.iter_mut() {
                     enemy.chase(&player, &bg_map);
-                    enemy.detect_collision(&mut player_gun.projectile);
+                    enemy.detect_collision(&mut player_gun.projectiles);
                 }
 
                 enemies_generator.update(5.0, 2);
@@ -109,17 +111,28 @@ async fn main() {
             
             // draw
             bg_map.draw();
-            player.draw(&player_vel, input_ui.pause);
-            player_gun.draw_gun(&bg_map, &cursor_pos, mouse_left_pressed, input_ui.pause);
+            player.draw(&player_vel, !pause_menu.resume);
+            player_gun.draw_gun(&bg_map, &cursor_pos, mouse_left_pressed, !pause_menu.resume);
             player_gun.draw_projectiles(&bg_map);
             for enemy in enemies_generator.current_enemies.iter_mut() {
-                enemy.draw(&bg_map, input_ui.pause);
+                enemy.draw(&bg_map, !pause_menu.resume);
             }
             user_interface::draw_health_bar();
 
-            if input_ui.pause {
+            //pause menu
+            if !pause_menu.resume {
                 user_interface::draw_opaque_background();
                 pause_menu.draw();
+
+                if pause_menu.mainmenu { 
+                    //clear all internal states before going back to main menu
+                    enemies_generator.clear();
+                    player_gun.clear();
+                    main_menu.play = false;
+                    pause_menu.mainmenu = false;
+                    pause_menu.resume = true;
+                }
+                if pause_menu.quit {return;}
             }
         }
 

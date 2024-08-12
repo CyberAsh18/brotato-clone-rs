@@ -15,7 +15,7 @@ pub struct Gun {
     pos: Point,
     pub texture: Option<Texture2D>,
     projectile_speed: f32,
-    pub projectile: Vec<Projectile>,
+    pub projectiles: Vec<Projectile>,
     pub projectile_texture: Option<Texture2D>,
     rate_of_fire: f32,
     time_count: f32,
@@ -41,7 +41,7 @@ impl Gun {
             projectile_speed,
             rate_of_fire,
             time_count,
-            projectile: vec![],
+            projectiles: vec![],
             texture: None,
             projectile_texture: None,
         };
@@ -65,7 +65,7 @@ impl Gun {
         self.pos.y = player.pos.y;
 
         //update projectile position (remove if it goes out of map bounds)
-        self.projectile.retain_mut(| proj | {
+        self.projectiles.retain_mut(| proj | {
             let screen_half_size_x = WINDOW_WIDTH/2.0;
             let screen_half_size_y = WINDOW_HEIGHT/2.0;
                 proj.pos.x = proj.pos.x + proj.params.rotation.cos() * self.projectile_speed * get_frame_time();
@@ -120,7 +120,7 @@ impl Gun {
         };
 
         if mouse_left_pressed && (self.time_count > 1.0/self.rate_of_fire) && !pause  {
-            self.projectile.push(Projectile {
+            self.projectiles.push(Projectile {
                 pos: Point {
                     x: x - bg_map.pos.x + self.size.x * theta.cos(),
                     y: y - bg_map.pos.y + self.size.y * theta.sin(),
@@ -173,7 +173,7 @@ impl Gun {
 
     pub fn draw_projectiles(&mut self, bg_map: &BackgroundMap) {
 
-        for proj in self.projectile.iter() {
+        for proj in self.projectiles.iter() {
             match &self.projectile_texture {
                 Some(a) => {
                     draw_texture_ex(
@@ -197,6 +197,10 @@ impl Gun {
             }
             
         }
+    }
+
+    pub fn clear(&mut self) {
+        self.projectiles.clear();
     }
 }
 

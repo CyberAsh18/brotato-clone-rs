@@ -87,7 +87,10 @@ impl Generator {
             self.generate(count);
             self.counter = 0.;
         }
+    }
 
+    pub fn clear(&mut self) {
+        self.current_enemies.clear();
     }
 
 }

@@ -59,10 +59,16 @@ pub struct PauseMenu {
 impl PauseMenu {
     pub fn initialize() -> PauseMenu {
         return PauseMenu {
-            resume: false,
+            resume: true,
             restart: false,
             mainmenu: false,
             quit: false,
+        }
+    }
+
+    pub fn update(&mut self) {
+        if is_key_pressed(KeyCode::Escape) {
+            self.resume = !self.resume;
         }
     }
 
