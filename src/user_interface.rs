@@ -11,6 +11,28 @@ pub fn draw_opaque_background() {
     })
 }
 
+pub fn draw_health_bar() {
+
+    let size_w = 140.0;
+    let size_h = 20.0;
+    let border_padding = 4.0;
+    let origin_x = 10.0;
+    let origin_y = 10.0;
+    //border
+    draw_rectangle_ex(origin_x, origin_y, size_w + border_padding * 2.0, size_h + border_padding * 2.0, DrawRectangleParams {
+        offset: vec2(0.0, 0.0),
+        rotation: 0.0,
+        color: Color { r: 0., g: 0., b: 0., a: 1.  },
+    });
+
+    //health bar
+    draw_rectangle_ex(origin_x + border_padding, origin_y + border_padding, size_w, size_h, DrawRectangleParams {
+        offset: vec2(0.0, 0.0),
+        rotation: 0.0,
+        color: Color { r: 0.55, g: 0.16, b: 0.16, a: 1.  },
+    });
+}
+
 pub async fn get_main_menu_skin() -> Skin {
     return {
         let font = load_ttf_font("assets/ui_assets/HTOWERT.TTF")

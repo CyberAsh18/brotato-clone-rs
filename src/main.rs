@@ -132,6 +132,7 @@ async fn main() {
             for enemy in enemies_generator.current_enemies.iter_mut() {
                 enemy.draw(&bg_map, input_ui.pause);
             }
+            user_interface::draw_health_bar();
 
             if input_ui.pause {
                 user_interface::draw_opaque_background();
