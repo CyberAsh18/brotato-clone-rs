@@ -2,6 +2,7 @@ use macroquad::prelude::*;
 use macroquad::ui::{hash, root_ui, widgets, Skin};
 
 use crate::global_constants::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
+use crate::player::Player;
 
 pub fn draw_opaque_background() {
     draw_rectangle_ex(0.0, 0.0, WINDOW_WIDTH, WINDOW_HEIGHT, DrawRectangleParams {
@@ -99,15 +100,23 @@ impl PauseMenu {
     }
 }
 
-pub fn draw_health_bar() {
+pub fn draw_health_bar(player: &Player) {
 
-    let size_w = 140.0;
+    let full_size_w = 140.0;
+    let size_w;
+
+    if player.hp < 0. {
+        size_w = 0.0;
+    } else {
+        size_w = (player.hp / 100.) * full_size_w;
+    }
+
     let size_h = 20.0;
     let border_padding = 4.0;
     let origin_x = 10.0;
     let origin_y = 10.0;
     //border
-    draw_rectangle_ex(origin_x, origin_y, size_w + border_padding * 2.0, size_h + border_padding * 2.0, DrawRectangleParams {
+    draw_rectangle_ex(origin_x, origin_y, full_size_w + border_padding * 2.0, size_h + border_padding * 2.0, DrawRectangleParams {
         offset: vec2(0.0, 0.0),
         rotation: 0.0,
         color: Color { r: 0., g: 0., b: 0., a: 1.  },

@@ -1,5 +1,4 @@
 use macroquad::{color::PINK, prelude::animation::{AnimatedSprite, Animation}, time::get_frame_time};
-use std::time::Duration;
 use crate::{custom::Point, enemy::Enemy, global_constants::{WINDOW_HEIGHT, WINDOW_WIDTH}};
 use rand::prelude::*;
 
@@ -9,10 +8,10 @@ enum EnemyType {
     Big,    // big and slow
 }
 
-pub struct Generator {            // total_count =   how many enemies in total to generate,
-    enemies_template: Vec<Enemy>,            //store different types of enemies here and generate clones of it for use.
+pub struct Generator {                  
+    enemies_template: Vec<Enemy>,       //store different types of enemies here and generate clones of it for use.
     pub current_enemies: Vec<Enemy>,
-    counter: f32, //time counter
+    counter: f32,                       //time counter
 }
 
 impl Generator {
@@ -95,17 +94,13 @@ impl Generator {
 
 }
 
+
 ///
 /// frequency   =   how often to generate the enemeis, 
 /// count       =   how many enemies to generate at one specific time,
 /// total_count =   how many enemies in total to generate,
-pub fn generator(frequency: i32, count: i32, total_count: i32, startup_time_offset: i32) -> Vec<Enemy> {
+pub fn generator(frequency: i32, count: i32, total_count: i32, startup_time_offset: i32) {
 
     //logic 1
     // frequency: every 5 seconds. count: 2 per 
-    
-
-
-
-    vec![]
 }

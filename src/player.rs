@@ -9,6 +9,10 @@ pub struct Player {
     pub pos: Point,
     pub mov: Movement,
     pub size: Point,
+    pub hp: f32,
+    pub hp_dropped: bool,
+    pub hp_reduction_cooldown_counter: f32,
+    pub hp_reduction_cooldown_value: f32,
     sprite_sheet: Option<AnimatedSprite>,
     pub texture: Vec<Texture2D>,
 }
@@ -39,6 +43,10 @@ impl Player {
                 x: WIDTH,
                 y: HEIGHT,
             },
+            hp: 100.,
+            hp_dropped: false,
+            hp_reduction_cooldown_counter: 0.,
+            hp_reduction_cooldown_value: 0.5, //this is in seconds
             sprite_sheet: None,
             texture: vec![],
         };
@@ -164,6 +172,7 @@ impl Player {
             match &mut self.sprite_sheet {
                 Some(a1) => {
                     a1.set_animation(anim_index);
+                    if !self.hp_dropped {
                     draw_texture_ex(
                         &self.texture[anim_index], 
                         self.pos.x, 
@@ -177,6 +186,9 @@ impl Player {
                             flip_y: false,
                             pivot: None,
                         });
+                    } else {
+                        self.hp_dropped = false;
+                    }
                     if !pause {
                         a1.update();
                     }
@@ -188,7 +200,13 @@ impl Player {
         } else {
             draw_rectangle(self.pos.x, self.pos.y, WIDTH, HEIGHT, ORANGE);
         }
-        
-        
+    }
+
+    pub fn restart(&mut self) {
+        self.hp = 100.;
+        self.pos = Point {
+            x: WINDOW_WIDTH/2.0 - WIDTH/2.0,
+            y: WINDOW_HEIGHT/2.0 - HEIGHT/2.0,
+        }
     }
 }

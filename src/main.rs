@@ -78,20 +78,16 @@ async fn main() {
         let now = SystemTime::now();
         clear_background(BLACK);
 
-        //input
-        let mouse_left_pressed = is_mouse_button_down(macroquad::input::MouseButton::Left);
-
         // main menu
         if !main_menu.play {
-            // draw
             bg_map.draw();
             main_menu.draw();
-
             if main_menu.quit { return; }
-
         } 
         // game
         else { 
+
+            //run the logic here
             if pause_menu.resume {
                 cursor_pos = input::get_cursor_pos();
                 player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
@@ -103,7 +99,7 @@ async fn main() {
                 
                 for enemy in enemies_generator.current_enemies.iter_mut() {
                     enemy.chase(&player, &bg_map);
-                    enemy.detect_collision(&mut player_gun.projectiles);
+                    enemy.detect_collision(&mut player_gun.projectiles, &mut player, &bg_map);
                 }
 
                 enemies_generator.update(5.0, 2);
@@ -112,26 +108,28 @@ async fn main() {
             // draw
             bg_map.draw();
             player.draw(&player_vel, !pause_menu.resume);
-            player_gun.draw_gun(&bg_map, &cursor_pos, mouse_left_pressed, !pause_menu.resume);
+            player_gun.draw_gun(&bg_map, &cursor_pos, !pause_menu.resume);
             player_gun.draw_projectiles(&bg_map);
             for enemy in enemies_generator.current_enemies.iter_mut() {
                 enemy.draw(&bg_map, !pause_menu.resume);
             }
-            user_interface::draw_health_bar();
+            user_interface::draw_health_bar(&player);
 
             //pause menu
             if !pause_menu.resume {
                 user_interface::draw_opaque_background();
                 pause_menu.draw();
 
-                if pause_menu.mainmenu { 
+                if pause_menu.mainmenu || pause_menu.restart { 
                     //clear all internal states before going back to main menu
                     enemies_generator.clear();
                     player_gun.clear();
-                    main_menu.play = false;
-                    pause_menu.mainmenu = false;
+                    player.restart();
+                    main_menu.play = !pause_menu.mainmenu;
+                    pause_menu.mainmenu = false; //revert the state to default
                     pause_menu.resume = true;
                 }
+
                 if pause_menu.quit {return;}
             }
         }
