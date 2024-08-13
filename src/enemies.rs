@@ -74,6 +74,7 @@ impl Generator {
         }
     }
 
+    ///make sure count is always above 1
     pub fn update(&mut self, frequency: f32, count: i32) {
 
         //remove enemy if hp is 0 or below
@@ -90,7 +91,7 @@ impl Generator {
         self.counter += get_frame_time();
 
         if self.counter > frequency {
-            self.generate(count);
+            self.generate(rand::thread_rng().gen_range(count-1..count+1) as i32);
             self.counter = 0.;
         }
     }
