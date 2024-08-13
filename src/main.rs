@@ -12,14 +12,10 @@ mod global_constants;
 use background_map::BackgroundMap;
 use custom::Point;
 use equipment::Gun;
-use global_constants::GAME_TITLE;
+use global_constants::{GAME_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, FPS};
 use macroquad::ui::root_ui;
 use player::Player;
-use global_constants::WINDOW_WIDTH;
-use global_constants::WINDOW_HEIGHT;
-use global_constants::FPS;
 use user_interface::get_menu_skin;
-
 use core::time;
 use std::{thread::sleep, time::SystemTime};
 use macroquad::prelude::*;

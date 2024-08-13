@@ -1,5 +1,4 @@
 use std::f32::consts::PI;
-
 use macroquad::prelude::*;
 use crate::{custom::Point, player::Player, BackgroundMap, WINDOW_HEIGHT, WINDOW_WIDTH};
 
