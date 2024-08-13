@@ -22,6 +22,7 @@ pub struct Enemy{
     hitbox_padding: f32,
     pub sprite_sheet: Option<AnimatedSprite>,
     pub texture: Vec<Texture2D>,
+    flip_x: bool,
 }
 
 impl Enemy {
@@ -37,6 +38,7 @@ impl Enemy {
             hitbox_padding: 5.0,
             sprite_sheet: None,
             texture: vec![],
+            flip_x: false
         };
 
         match texture_paths {
@@ -126,6 +128,9 @@ impl Enemy {
         let mut theta = ((player.pos.y - pos_y) / (player.pos.x - pos_x)).atan();
         if player.pos.x - pos_x < 0.0 {
             theta = theta - PI;
+            self.flip_x = true;
+        } else {
+            self.flip_x = false;
         }
 
         self.pos = Point {
@@ -151,7 +156,7 @@ impl Enemy {
                                 source: Some(a1.frame().source_rect),
                                 dest_size: Some(a1.frame().dest_size),
                                 rotation: 0.0,
-                                flip_x: false,
+                                flip_x: self.flip_x,
                                 flip_y: false,
                                 pivot: None,
                             });

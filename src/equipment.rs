@@ -129,7 +129,7 @@ impl Gun {
                     x: 0.0,
                     y: 0.0,
                 },
-                damage: 20.0,
+                damage: 25.0,
                 params : params.clone(),
             });
             self.time_count = 0.0;
