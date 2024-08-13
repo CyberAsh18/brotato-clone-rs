@@ -4,6 +4,13 @@ use macroquad::ui::{hash, root_ui, widgets, Skin};
 use crate::global_constants::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::player::Player;
 
+
+pub async fn initialize_font() -> Font {
+    return load_ttf_font("assets/ui_assets/The Bomb Sound.ttf")
+    .await
+    .unwrap();
+}
+
 pub fn draw_opaque_background() {
     draw_rectangle_ex(0.0, 0.0, WINDOW_WIDTH, WINDOW_HEIGHT, DrawRectangleParams {
         offset: vec2(0.0, 0.0),
@@ -100,6 +107,20 @@ impl PauseMenu {
     }
 }
 
+pub fn draw_kill_count(font : &Font, enemy_kill_count: i32) {
+    let mut edited_str = "Kill count: ".to_owned();
+    edited_str.push_str(&enemy_kill_count.to_string());
+    //root_ui()
+    draw_text_ex(&edited_str, WINDOW_WIDTH - 250., 30., TextParams{
+        font: Some(font),
+        font_size: 32,
+        font_scale: 1.,
+        font_scale_aspect: 1.,
+        rotation: 0.,
+        color: ORANGE,
+    });
+}
+
 pub fn draw_health_bar(player: &Player) {
 
     let full_size_w = 140.0;
@@ -130,11 +151,8 @@ pub fn draw_health_bar(player: &Player) {
     });
 }
 
-pub async fn get_menu_skin() -> Skin {
+pub async fn get_menu_skin(font : &Font) -> Skin {
     return {
-        let font = load_ttf_font("assets/ui_assets/The Bomb Sound.ttf")
-            .await
-            .unwrap();
         let label_style = root_ui()
             .style_builder()
             .with_font(&font)

@@ -70,7 +70,9 @@ async fn main() {
     let mut enemies_generator = enemies::Generator::initialize().await;
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
-    let main_menu_ui = get_menu_skin().await;
+
+    let font = user_interface::initialize_font().await;
+    let main_menu_ui = get_menu_skin(&font).await;
     
     root_ui().push_skin(&main_menu_ui);
     
@@ -114,6 +116,7 @@ async fn main() {
                 enemy.draw(&bg_map, !pause_menu.resume);
             }
             user_interface::draw_health_bar(&player);
+            user_interface::draw_kill_count(&font, enemies_generator.kill_count);
 
             //pause menu
             if !pause_menu.resume {

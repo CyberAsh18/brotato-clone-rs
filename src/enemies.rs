@@ -9,9 +9,10 @@ enum EnemyType {
 }
 
 pub struct Generator {                  
-    enemies_template: Vec<Enemy>,       //store different types of enemies here and generate clones of it for use.
+    enemies_template: Vec<Enemy>,       // store different types of enemies here and generate clones of it for use.
     pub current_enemies: Vec<Enemy>,
-    counter: f32,                       //time counter
+    counter: f32,                       // time counter
+    pub kill_count: i32,                    // enemy kill count
 }
 
 impl Generator {
@@ -36,6 +37,7 @@ impl Generator {
             ],
             current_enemies: vec![],
             counter: 0.,
+            kill_count: 0,
         };
     }
 
@@ -76,7 +78,12 @@ impl Generator {
 
         //remove enemy if hp is 0 or below
         self.current_enemies.retain(|enemy| {
-            !(enemy.hp <= 0.0)
+            if enemy.hp <= 0.0 {
+                self.kill_count += 1;
+                return false;
+            } else {
+                return true;
+            }
         });
 
         //generate enemy every few x seconds
@@ -89,6 +96,7 @@ impl Generator {
     }
 
     pub fn clear(&mut self) {
+        self.kill_count = 0;
         self.current_enemies.clear();
     }
 
