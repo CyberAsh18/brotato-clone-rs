@@ -6,7 +6,6 @@ mod enemy;
 mod enemies;
 mod equipment;
 mod collision;
-mod animation;
 mod user_interface;
 mod global_constants;
 
