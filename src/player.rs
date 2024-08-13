@@ -154,6 +154,8 @@ impl Player {
         }
     }
 
+    pub fn is_dead(&self) -> bool { self.hp <= 0. }
+
     //todo draw simple rects when the texture is unavailable
     pub fn draw(&mut self, player_vel: &Point, pause: bool) {
         if self.texture.len() > 0 {

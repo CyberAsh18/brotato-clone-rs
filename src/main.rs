@@ -66,6 +66,7 @@ async fn main() {
     
     let mut main_menu = user_interface::MainMenu::initialize();
     let mut pause_menu = user_interface::PauseMenu::initialize();
+    let mut gameover_menu = user_interface::GameOverMenu::initialize();
 
     let mut enemies_generator = enemies::Generator::initialize().await;
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
@@ -90,7 +91,7 @@ async fn main() {
         else { 
 
             //run the logic here
-            if pause_menu.resume {
+            if pause_menu.resume && !gameover_menu.draw {
                 cursor_pos = input::get_cursor_pos();
                 player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
                 pause_menu.update();
@@ -104,7 +105,11 @@ async fn main() {
                     enemy.detect_collision(&mut player_gun.projectiles, &mut player, &bg_map);
                 }
 
+                //every 5 seconds generate 2 enemies
                 enemies_generator.update(5.0, 2);
+                if player.is_dead() {
+                    gameover_menu.draw = true;
+                }
             }
             
             // draw
@@ -115,6 +120,11 @@ async fn main() {
             for enemy in enemies_generator.current_enemies.iter_mut() {
                 enemy.draw(&bg_map, !pause_menu.resume);
             }
+            
+            
+            //to do: refactor the ui flow below
+            // ------------------- UI stuff ---------------------------------//
+            
             user_interface::draw_health_bar(&player);
             user_interface::draw_kill_count(&font, enemies_generator.kill_count);
 
@@ -124,17 +134,35 @@ async fn main() {
                 pause_menu.draw();
 
                 if pause_menu.mainmenu || pause_menu.restart { 
+                    //clear all internal states before going back to main menu or restarting
+                    enemies_generator.clear();
+                    player_gun.clear();
+                    player.restart();
+                    main_menu.play = !pause_menu.mainmenu; //set the rhs to default after use
+                    pause_menu.mainmenu = false; //revert the state to default
+                    pause_menu.resume = true;
+                    pause_menu.restart = false;
+                }
+
+                if pause_menu.quit {return;}
+            } else if gameover_menu.draw {
+                user_interface::draw_opaque_background();
+                gameover_menu.draw();
+                
+                if gameover_menu.mainmenu || gameover_menu.restart {
                     //clear all internal states before going back to main menu
                     enemies_generator.clear();
                     player_gun.clear();
                     player.restart();
-                    main_menu.play = !pause_menu.mainmenu;
-                    pause_menu.mainmenu = false; //revert the state to default
-                    pause_menu.resume = true;
+                    gameover_menu.draw = false;
+                    main_menu.play = !gameover_menu.mainmenu; //set the rhs to default after use
+                    gameover_menu.mainmenu = false; //revert the state to default
+                    gameover_menu.restart = false;
                 }
-
-                if pause_menu.quit {return;}
-            }
+                
+                if gameover_menu.quit {return;}
+            } 
+            
         }
 
         fps_control(now);

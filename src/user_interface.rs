@@ -4,21 +4,6 @@ use macroquad::ui::{hash, root_ui, widgets, Skin};
 use crate::global_constants::{GAME_TITLE, WINDOW_HEIGHT, WINDOW_WIDTH};
 use crate::player::Player;
 
-
-pub async fn initialize_font() -> Font {
-    return load_ttf_font("assets/ui_assets/The Bomb Sound.ttf")
-    .await
-    .unwrap();
-}
-
-pub fn draw_opaque_background() {
-    draw_rectangle_ex(0.0, 0.0, WINDOW_WIDTH, WINDOW_HEIGHT, DrawRectangleParams {
-        offset: vec2(0.0, 0.0),
-        rotation: 0.0,
-        color: Color { r: 0.0, g: 0.0, b: 0.0, a: 0.5  },
-    })
-}
-
 pub struct MainMenu {
     pub play: bool,
     pub options: bool,
@@ -105,6 +90,63 @@ impl PauseMenu {
 
         });
     }
+}
+
+pub struct GameOverMenu {
+    pub draw: bool,
+    pub restart: bool,
+    pub mainmenu: bool,
+    pub quit: bool,
+}
+
+impl GameOverMenu {
+    pub fn initialize() -> GameOverMenu {
+        return GameOverMenu {
+            draw: false,
+            restart: false,
+            mainmenu: false,
+            quit: false,
+        }
+    }
+
+    pub fn draw(&mut self) {
+        let width = 300.0;
+        let height = 280.0;
+        let game_over = "Game Over!";
+        let size = root_ui().calc_size(&game_over);
+        root_ui().label(vec2(WINDOW_WIDTH / 2.0 - size.x / 2.0, 120.), game_over);
+        root_ui().window(hash!(), 
+        vec2(WINDOW_WIDTH / 2.0  - width/2.0, WINDOW_HEIGHT / 2.0 - height / 2.0 + 40.), 
+        vec2(width, height), |ui| {
+    
+            self.restart = widgets::Button::new("Restart")
+                .position(vec2(50.0, 40.0))
+                .ui(ui);
+    
+            self.mainmenu = widgets::Button::new("Main Menu")
+                .position(vec2(30.0, 110.0))
+                .ui(ui);
+
+            self.quit = widgets::Button::new("Quit")
+                .position(vec2(75.0, 180.0))
+                .ui(ui);
+
+        });
+    }
+}
+
+pub async fn initialize_font() -> Font {
+    return load_ttf_font("assets/ui_assets/The Bomb Sound.ttf")
+    .await
+    .unwrap();
+}
+
+pub fn draw_opaque_background() {
+    draw_rectangle_ex(0.0, 0.0, WINDOW_WIDTH, WINDOW_HEIGHT, DrawRectangleParams {
+        offset: vec2(0.0, 0.0),
+        rotation: 0.0,
+        color: Color { r: 0.0, g: 0.0, b: 0.0, a: 0.5  },
+    })
 }
 
 pub fn draw_kill_count(font : &Font, enemy_kill_count: i32) {
