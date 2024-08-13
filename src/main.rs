@@ -109,8 +109,8 @@ async fn main() {
             
             // draw
             bg_map.draw();
-            player.draw(&player_vel, !pause_menu.resume);
-            player_gun.draw_gun(&bg_map, &cursor_pos, !pause_menu.resume);
+            player.draw(&player_vel, !pause_menu.resume|| gameover_menu.draw);
+            player_gun.draw_gun(&bg_map, &cursor_pos, !pause_menu.resume|| gameover_menu.draw);
             player_gun.draw_projectiles(&bg_map);
             for enemy in enemies_generator.current_enemies.iter_mut() {
                 enemy.draw(&bg_map, !pause_menu.resume || gameover_menu.draw);
