@@ -2,11 +2,11 @@ use macroquad::{color::PINK, prelude::animation::{AnimatedSprite, Animation}, ti
 use crate::{custom::Point, enemy::Enemy, global_constants::{WINDOW_HEIGHT, WINDOW_WIDTH}};
 use rand::prelude::*;
 
-enum EnemyType {
-    Small,  // small and fast
-    Medium, // default
-    Big,    // big and slow
-}
+// enum EnemyType {
+//     Small,  // small and fast
+//     Medium, // default
+//     Big,    // big and slow
+// }
 
 pub struct Generator {                  
     enemies_template: Vec<Enemy>,       // store different types of enemies here and generate clones of it for use.
@@ -44,7 +44,7 @@ impl Generator {
     fn generate(&mut self, count: i32) {
         let enemy_type_1 = 0;
         //generate
-        for index in 0..count {
+        for _ in 0..count {
             let mut temp_x = WINDOW_WIDTH - self.enemies_template[0].size.x;
             let mut temp_y = WINDOW_HEIGHT - self.enemies_template[0].size.y;
             let border_pad = 25.0;
@@ -103,12 +103,12 @@ impl Generator {
 }
 
 
-///
-/// frequency   =   how often to generate the enemeis, 
-/// count       =   how many enemies to generate at one specific time,
-/// total_count =   how many enemies in total to generate,
-pub fn generator(frequency: i32, count: i32, total_count: i32, startup_time_offset: i32) {
+// ///
+// /// frequency   =   how often to generate the enemeis, 
+// /// count       =   how many enemies to generate at one specific time,
+// /// total_count =   how many enemies in total to generate,
+// pub fn generator(frequency: i32, count: i32, total_count: i32, startup_time_offset: i32) {
 
-    //logic 1
-    // frequency: every 5 seconds. count: 2 per 
-}
+//     //logic 1
+//     // frequency: every 5 seconds. count: 2 per 
+// }

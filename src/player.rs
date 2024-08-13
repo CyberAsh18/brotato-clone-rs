@@ -32,12 +32,6 @@ impl Player {
                         y: 0.0,
                     }
                 },
-                reset_dir: Direction {
-                    point: Point {
-                        x: 0.0,
-                        y: 0.0,
-                    }
-                }
             },
             size: Point {
                 x: WIDTH,

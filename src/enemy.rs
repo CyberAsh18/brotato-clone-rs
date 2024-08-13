@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use animation::{AnimatedSprite, Animation};
+use animation::AnimatedSprite;
 use macroquad::prelude::*;
 use parry2d::{bounding_volume::Aabb, na::Point2};
 use crate::{background_map::BackgroundMap, collision::Collision, custom::Point, equipment::Projectile, player::Player};

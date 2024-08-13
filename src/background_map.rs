@@ -17,7 +17,6 @@ impl BackgroundMap {
             let img = texture.unwrap();
             let width = img.width();
             let height = img.height();
-            info!("widdth {}", width);
             Option::from(BackgroundMap {
                 background_img: img,
                 pos: custom::Point {
