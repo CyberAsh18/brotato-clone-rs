@@ -32,12 +32,6 @@ impl Player {
                         y: 0.0,
                     }
                 },
-                reset_dir: Direction {
-                    point: Point {
-                        x: 0.0,
-                        y: 0.0,
-                    }
-                }
             },
             size: Point {
                 x: WIDTH,
@@ -159,6 +153,8 @@ impl Player {
             self.pos.y = screen_half_size_y;
         }
     }
+
+    pub fn is_dead(&self) -> bool { self.hp <= 0. }
 
     //todo draw simple rects when the texture is unavailable
     pub fn draw(&mut self, player_vel: &Point, pause: bool) {

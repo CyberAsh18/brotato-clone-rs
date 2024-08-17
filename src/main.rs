@@ -6,21 +6,16 @@ mod enemy;
 mod enemies;
 mod equipment;
 mod collision;
-mod animation;
 mod user_interface;
 mod global_constants;
 
 use background_map::BackgroundMap;
 use custom::Point;
 use equipment::Gun;
-use global_constants::GAME_TITLE;
+use global_constants::{GAME_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, FPS};
 use macroquad::ui::root_ui;
 use player::Player;
-use global_constants::WINDOW_WIDTH;
-use global_constants::WINDOW_HEIGHT;
-use global_constants::FPS;
 use user_interface::get_menu_skin;
-
 use core::time;
 use std::{thread::sleep, time::SystemTime};
 use macroquad::prelude::*;
@@ -66,11 +61,14 @@ async fn main() {
     
     let mut main_menu = user_interface::MainMenu::initialize();
     let mut pause_menu = user_interface::PauseMenu::initialize();
+    let mut gameover_menu = user_interface::GameOverMenu::initialize();
 
     let mut enemies_generator = enemies::Generator::initialize().await;
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
-    let main_menu_ui = get_menu_skin().await;
+
+    let font = user_interface::initialize_font().await;
+    let main_menu_ui = get_menu_skin(&font).await;
     
     root_ui().push_skin(&main_menu_ui);
     
@@ -88,7 +86,7 @@ async fn main() {
         else { 
 
             //run the logic here
-            if pause_menu.resume {
+            if pause_menu.resume && !gameover_menu.draw {
                 cursor_pos = input::get_cursor_pos();
                 player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
                 pause_menu.update();
@@ -102,18 +100,28 @@ async fn main() {
                     enemy.detect_collision(&mut player_gun.projectiles, &mut player, &bg_map);
                 }
 
-                enemies_generator.update(5.0, 2);
+                //every 5 seconds generate 2 enemies
+                enemies_generator.update(4.0, 2);
+                if player.is_dead() {
+                    gameover_menu.draw = true;
+                }
             }
             
             // draw
             bg_map.draw();
-            player.draw(&player_vel, !pause_menu.resume);
-            player_gun.draw_gun(&bg_map, &cursor_pos, !pause_menu.resume);
+            player.draw(&player_vel, !pause_menu.resume|| gameover_menu.draw);
+            player_gun.draw_gun(&bg_map, &cursor_pos, !pause_menu.resume|| gameover_menu.draw);
             player_gun.draw_projectiles(&bg_map);
             for enemy in enemies_generator.current_enemies.iter_mut() {
-                enemy.draw(&bg_map, !pause_menu.resume);
+                enemy.draw(&bg_map, !pause_menu.resume || gameover_menu.draw);
             }
+            
+            
+            //to do: refactor the ui flow below
+            // ------------------- UI stuff ---------------------------------//
+            
             user_interface::draw_health_bar(&player);
+            user_interface::draw_kill_count(&font, enemies_generator.kill_count);
 
             //pause menu
             if !pause_menu.resume {
@@ -121,17 +129,35 @@ async fn main() {
                 pause_menu.draw();
 
                 if pause_menu.mainmenu || pause_menu.restart { 
+                    //clear all internal states before going back to main menu or restarting
+                    enemies_generator.clear();
+                    player_gun.clear();
+                    player.restart();
+                    main_menu.play = !pause_menu.mainmenu; //set the rhs to default after use
+                    pause_menu.mainmenu = false; //revert the state to default
+                    pause_menu.resume = true;
+                    pause_menu.restart = false;
+                }
+
+                if pause_menu.quit {return;}
+            } else if gameover_menu.draw {
+                user_interface::draw_opaque_background();
+                gameover_menu.draw();
+                
+                if gameover_menu.mainmenu || gameover_menu.restart {
                     //clear all internal states before going back to main menu
                     enemies_generator.clear();
                     player_gun.clear();
                     player.restart();
-                    main_menu.play = !pause_menu.mainmenu;
-                    pause_menu.mainmenu = false; //revert the state to default
-                    pause_menu.resume = true;
+                    gameover_menu.draw = false;
+                    main_menu.play = !gameover_menu.mainmenu; //set the rhs to default after use
+                    gameover_menu.mainmenu = false; //revert the state to default
+                    gameover_menu.restart = false;
                 }
-
-                if pause_menu.quit {return;}
-            }
+                
+                if gameover_menu.quit {return;}
+            } 
+            
         }
 
         fps_control(now);

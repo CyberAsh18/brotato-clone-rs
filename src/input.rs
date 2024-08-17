@@ -1,5 +1,4 @@
 use macroquad::input::{is_key_pressed, is_key_released, mouse_position, KeyCode};
-use macroquad::prelude::info;
 use macroquad::time::get_frame_time;
 use crate::custom::{Direction, Point};
 
@@ -14,7 +13,6 @@ pub fn get_cursor_pos() -> Point {
 pub struct Movement{
     pub speed: f32, // pixel per frame
     pub dir: Direction,
-    pub reset_dir: Direction
 }
 
 impl Movement {

@@ -2,16 +2,17 @@ use macroquad::{color::PINK, prelude::animation::{AnimatedSprite, Animation}, ti
 use crate::{custom::Point, enemy::Enemy, global_constants::{WINDOW_HEIGHT, WINDOW_WIDTH}};
 use rand::prelude::*;
 
-enum EnemyType {
-    Small,  // small and fast
-    Medium, // default
-    Big,    // big and slow
-}
+// enum EnemyType {
+//     Small,  // small and fast
+//     Medium, // default
+//     Big,    // big and slow
+// }
 
 pub struct Generator {                  
-    enemies_template: Vec<Enemy>,       //store different types of enemies here and generate clones of it for use.
+    enemies_template: Vec<Enemy>,       // store different types of enemies here and generate clones of it for use.
     pub current_enemies: Vec<Enemy>,
-    counter: f32,                       //time counter
+    counter: f32,                       // time counter
+    pub kill_count: i32,                    // enemy kill count
 }
 
 impl Generator {
@@ -36,13 +37,14 @@ impl Generator {
             ],
             current_enemies: vec![],
             counter: 0.,
+            kill_count: 0,
         };
     }
 
     fn generate(&mut self, count: i32) {
         let enemy_type_1 = 0;
         //generate
-        for index in 0..count {
+        for _ in 0..count {
             let mut temp_x = WINDOW_WIDTH - self.enemies_template[0].size.x;
             let mut temp_y = WINDOW_HEIGHT - self.enemies_template[0].size.y;
             let border_pad = 25.0;
@@ -72,35 +74,42 @@ impl Generator {
         }
     }
 
+    ///make sure count is always above 1
     pub fn update(&mut self, frequency: f32, count: i32) {
 
         //remove enemy if hp is 0 or below
         self.current_enemies.retain(|enemy| {
-            !(enemy.hp <= 0.0)
+            if enemy.hp <= 0.0 {
+                self.kill_count += 1;
+                return false;
+            } else {
+                return true;
+            }
         });
 
         //generate enemy every few x seconds
         self.counter += get_frame_time();
 
         if self.counter > frequency {
-            self.generate(count);
+            self.generate(rand::thread_rng().gen_range(count-1..count+1) as i32);
             self.counter = 0.;
         }
     }
 
     pub fn clear(&mut self) {
+        self.kill_count = 0;
         self.current_enemies.clear();
     }
 
 }
 
 
-///
-/// frequency   =   how often to generate the enemeis, 
-/// count       =   how many enemies to generate at one specific time,
-/// total_count =   how many enemies in total to generate,
-pub fn generator(frequency: i32, count: i32, total_count: i32, startup_time_offset: i32) {
+// ///
+// /// frequency   =   how often to generate the enemeis, 
+// /// count       =   how many enemies to generate at one specific time,
+// /// total_count =   how many enemies in total to generate,
+// pub fn generator(frequency: i32, count: i32, total_count: i32, startup_time_offset: i32) {
 
-    //logic 1
-    // frequency: every 5 seconds. count: 2 per 
-}
+//     //logic 1
+//     // frequency: every 5 seconds. count: 2 per 
+// }
