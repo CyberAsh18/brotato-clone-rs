@@ -6,35 +6,70 @@ use crate::player::Player;
 
 pub struct MainMenu {
     pub play: bool,
-    pub options: bool,
+    pub options: Options,
     pub quit: bool,
+    pub here: bool,
+    pub width: f32,
+    pub height: f32,
+}
+
+pub struct Options {
+    pub keybToShoot: bool,
+    pub here: bool,
 }
 
 impl MainMenu {
     pub fn initialize() -> MainMenu {
         return MainMenu {
             play: false, 
-            options: false, 
-            quit: false 
+            options: Options { keybToShoot: false , here: false}, 
+            quit: false, 
+            here: true,
+            width: 300.0,
+            height: 250.0,
         }
     }
 
     pub fn draw(&mut self) {
-        let width = 300.0;
-        let height = 250.0;
         let size = root_ui().calc_size(&GAME_TITLE);
         root_ui().label(vec2(WINDOW_WIDTH / 2.0 - size.x / 2.0, 120.), GAME_TITLE);
+        if self.here {
+            self.draw_main_menu();
+        } else {
+            if self.options.here {
+                self.draw_options_menu();
+            }
+        }
+    }
+
+    fn draw_options_menu(&mut self) {
         root_ui().window(hash!(), 
-        vec2(WINDOW_WIDTH / 2.0  - width/2.0, WINDOW_HEIGHT / 2.0 - height / 2.0 + 20.), 
-        vec2(width, height), |ui| {
-    
+        vec2(WINDOW_WIDTH / 2.0  - self.width/2.0, WINDOW_HEIGHT / 2.0 - self.height / 2.0 + 20.), 
+        vec2(self.width, self.height), |ui| {
+            widgets::Label::new("Options")
+                .position(vec2(120.0, 30.0))
+                .size(vec2(20.0, 5.0))
+                .ui(ui);
+            ui.checkbox(hash!(), "use keyboard to shoot", &mut self.options.keybToShoot);
+            self.options.here = !widgets::Button::new("Back")
+                .position(vec2(75.0, 100.0))
+                .ui(ui);
+            self.here = !self.options.here;
+        });
+    }
+
+    fn draw_main_menu(&mut self) {
+        root_ui().window(hash!(), 
+        vec2(WINDOW_WIDTH / 2.0  - self.width/2.0, WINDOW_HEIGHT / 2.0 - self.height / 2.0 + 20.), 
+        vec2(self.width, self.height), |ui| {
+
             self.play = widgets::Button::new("Play")
                 .position(vec2(75.0, 30.0))
                 .ui(ui);
-            self.options = widgets::Button::new("Options")
+            self.here = !widgets::Button::new("Options")
                 .position(vec2(50.0, 100.0))
                 .ui(ui);
-    
+            self.options.here = !self.here;
             self.quit = widgets::Button::new("Quit")
                 .position(vec2(75.0, 170.0))
                 .ui(ui);
