@@ -30,30 +30,32 @@ impl MainMenu {
         }
     }
 
-    pub fn draw(&mut self) {
+    pub fn draw(&mut self, ui_skins: &UiSkins) {
         let size = root_ui().calc_size(&GAME_TITLE);
         root_ui().label(vec2(WINDOW_WIDTH / 2.0 - size.x / 2.0, 120.), GAME_TITLE);
         if self.here {
             self.draw_main_menu();
         } else {
             if self.options.here {
-                self.draw_options_menu();
+                self.draw_options_menu(ui_skins);
             }
         }
     }
 
-    fn draw_options_menu(&mut self) {
+    fn draw_options_menu(&mut self,  ui_skins: &UiSkins) {
         root_ui().window(hash!(), 
         vec2(WINDOW_WIDTH / 2.0  - self.width/2.0, WINDOW_HEIGHT / 2.0 - self.height / 2.0 + 20.), 
-        vec2(self.width, self.height), |ui| {
-            widgets::Label::new("Options")
-                .position(vec2(120.0, 30.0))
-                .size(vec2(20.0, 5.0))
-                .ui(ui);
-            ui.checkbox(hash!(), "use keyboard to shoot", &mut self.options.keybToShoot);
+        vec2(self.width, self.height), 
+        |ui| {
             self.options.here = !widgets::Button::new("Back")
                 .position(vec2(75.0, 100.0))
                 .ui(ui);
+            ui.push_skin(&ui_skins.small_label);
+            //ui.checkbox(hash!(), "use keyb to shoot", &mut self.options.keybToShoot);
+            widgets::Checkbox::new(hash!())
+                .label("use keyb to shoot")
+                .ui(ui,&mut self.options.keybToShoot);
+            ui.pop_skin();
             self.here = !self.options.here;
         });
     }
@@ -228,6 +230,41 @@ pub fn draw_health_bar(player: &Player) {
     });
 }
 
+pub struct UiSkins {
+    pub small_label: Skin,
+}
+
+impl UiSkins {
+    pub fn new(font: &Font) -> Self {
+
+        let small_label_style = root_ui()
+            .style_builder()
+            .with_font(font)
+            .unwrap()
+            .font_size(30) 
+            .text_color(Color::from_rgba(180, 180, 120, 255))
+            .build();
+
+        let small_checkbox_style = root_ui()
+            .style_builder()
+            .with_font(font)
+            .unwrap()
+            .font_size(30) 
+            .text_color(Color::from_rgba(180, 180, 120, 255))
+            .build(); 
+
+        let small_label_skin = Skin {
+            label_style: small_label_style.clone(),
+            checkbox_style: small_checkbox_style.clone(),
+            ..root_ui().default_skin()
+        };
+
+        Self {
+            small_label: small_label_skin,
+        }
+    }
+}
+
 pub async fn get_menu_skin(font : &Font) -> Skin {
     return {
         let label_style = root_ui()
@@ -235,7 +272,7 @@ pub async fn get_menu_skin(font : &Font) -> Skin {
             .with_font(&font)
             .unwrap()
             .text_color(Color::from_rgba(180, 180, 120, 255))
-            .font_size(50)
+            .font_size(70)
             .build();
 
         let window_style = root_ui()

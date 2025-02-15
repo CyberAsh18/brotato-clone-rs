@@ -67,9 +67,10 @@ async fn main() {
     let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
 
-    let font = user_interface::initialize_font().await;
+    let font: Font = user_interface::initialize_font().await;
     let main_menu_ui = get_menu_skin(&font).await;
-    
+    let ui_skins = user_interface::UiSkins::new(&font);
+
     root_ui().push_skin(&main_menu_ui);
     
     loop {
@@ -79,7 +80,7 @@ async fn main() {
         // main menu
         if !main_menu.play {
             bg_map.draw();
-            main_menu.draw();
+            main_menu.draw(&ui_skins);
             if main_menu.quit { return; }
         } 
         // game
