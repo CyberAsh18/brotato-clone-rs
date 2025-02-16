@@ -241,18 +241,19 @@ impl UiSkins {
             .style_builder()
             .with_font(font)
             .unwrap()
-            .font_size(30) 
+            .font_size(25) 
             .text_color(Color::from_rgba(180, 180, 120, 255))
             .build();
 
+        let selected_color = Color::from_rgba(170, 80, 80, 255);
+        let hovered_color = Color::from_rgba(180, 120, 80, 255);
+
         let small_checkbox_style = root_ui()
             .style_builder()
-            .color_selected(Color::from_rgba(190, 190, 190, 255))
-            .with_font(&font)
-            .unwrap()
-            .text_color(Color::from_rgba(120, 120, 120, 255))
-            .color(Color::from_rgba(210, 210, 210, 255))
-            .font_size(25)
+            .color_selected(selected_color)
+            .color_hovered(hovered_color)
+            .color_clicked(selected_color)
+            .color_selected_hovered(hovered_color)
             .build();
 
         let small_label_skin = Skin {

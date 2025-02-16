@@ -64,7 +64,6 @@ async fn main() {
     let mut gameover_menu = user_interface::GameOverMenu::initialize();
 
     let mut enemies_generator = enemies::Generator::initialize().await;
-    let mut cursor_pos = Point {x: 0.0, y: 0.0};
     let mut player_vel = Point {x: 0.0, y: 0.0};
 
     let font: Font = user_interface::initialize_font().await;
@@ -88,7 +87,6 @@ async fn main() {
 
             //run the logic here
             if pause_menu.resume && !gameover_menu.draw {
-                cursor_pos = input::get_cursor_pos();
                 player_vel = player.mov.register_keyboard_press(); // <= players movement is registered here
                 pause_menu.update();
 
@@ -111,7 +109,7 @@ async fn main() {
             // draw
             bg_map.draw();
             player.draw(&player_vel, !pause_menu.resume|| gameover_menu.draw);
-            player_gun.draw_gun(&bg_map, &cursor_pos, !pause_menu.resume|| gameover_menu.draw);
+            player_gun.draw_gun(&bg_map, !pause_menu.resume|| gameover_menu.draw, main_menu.options.keybToShoot);
             player_gun.draw_projectiles(&bg_map);
             for enemy in enemies_generator.current_enemies.iter_mut() {
                 enemy.draw(&bg_map, !pause_menu.resume || gameover_menu.draw);
