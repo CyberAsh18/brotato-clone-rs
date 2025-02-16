@@ -47,15 +47,15 @@ impl MainMenu {
         vec2(WINDOW_WIDTH / 2.0  - self.width/2.0, WINDOW_HEIGHT / 2.0 - self.height / 2.0 + 20.), 
         vec2(self.width, self.height), 
         |ui| {
-            self.options.here = !widgets::Button::new("Back")
-                .position(vec2(75.0, 100.0))
-                .ui(ui);
             ui.push_skin(&ui_skins.small_label);
-            //ui.checkbox(hash!(), "use keyb to shoot", &mut self.options.keybToShoot);
             widgets::Checkbox::new(hash!())
-                .label("use keyb to shoot")
-                .ui(ui,&mut self.options.keybToShoot);
+                .pos(vec2(-70.0, 50.0))
+                .label("keyb to shoot")
+                .ui(ui, &mut self.options.keybToShoot);
             ui.pop_skin();
+            self.options.here = !widgets::Button::new("Back")
+                .position(vec2(75.0, 150.0))
+                .ui(ui);
             self.here = !self.options.here;
         });
     }
@@ -247,11 +247,13 @@ impl UiSkins {
 
         let small_checkbox_style = root_ui()
             .style_builder()
-            .with_font(font)
+            .color_selected(Color::from_rgba(190, 190, 190, 255))
+            .with_font(&font)
             .unwrap()
-            .font_size(30) 
-            .text_color(Color::from_rgba(180, 180, 120, 255))
-            .build(); 
+            .text_color(Color::from_rgba(120, 120, 120, 255))
+            .color(Color::from_rgba(210, 210, 210, 255))
+            .font_size(25)
+            .build();
 
         let small_label_skin = Skin {
             label_style: small_label_style.clone(),
@@ -272,7 +274,7 @@ pub async fn get_menu_skin(font : &Font) -> Skin {
             .with_font(&font)
             .unwrap()
             .text_color(Color::from_rgba(180, 180, 120, 255))
-            .font_size(70)
+            .font_size(50)
             .build();
 
         let window_style = root_ui()

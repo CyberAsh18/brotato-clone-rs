@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = "0.4.12"
+macroquad = "0.4.13"
 parry2d = "0.17.0"
 rand = "0.8.4"
+
+[patch.crates-io]
+macroquad = { path = "C:\\Users\\user\\Documents\\GitProjects\\macroquad" }
